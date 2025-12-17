@@ -1,0 +1,70 @@
+= Glossary
+
+////
+The glossary explains terminology and allows to reference acronyms easily. Copy the `Link` example and paste it in your document to create a link to the glossary entry.
+////
+
+[cols="1,8", id=glossary, options="header"]
+|===
+|Term |Description
+
+|[[AI]]AI
+|Artificial Intelligence - Technology enabling machines to simulate human intelligence, used in the platform for chat companions and content generation.
+
+|[[COPPA]]COPPA
+|Children's Online Privacy Protection Act - U.S. federal law that imposes requirements on operators of websites or online services directed to children under 13.
+
+|[[CMS]]CMS
+|Content Management System - Software used to manage digital content. Calimero uses headless CMS (Sanity/Contentful) for content delivery.
+
+|[[CDN]]CDN
+|Content Delivery Network - A geographically distributed network of servers that delivers cached content from locations closer to users.
+
+|[[CORS]]CORS
+|Cross-Origin Resource Sharing - Security mechanism that allows or restricts requests for resources from another domain.
+
+|[[ISR]]ISR
+|Incremental Static Regeneration - Next.js feature that allows static pages to be updated after build time without rebuilding the entire site.
+
+|[[JWT]]JWT
+|JSON Web Token - Compact, URL-safe token format used for secure information transfer between parties.
+
+|[[LLM]]LLM
+|Large Language Model - AI models trained on vast text data, used to power the AI chat companions (e.g., Claude, GPT).
+
+|[[MVP]]MVP
+|Minimum Viable Product - The initial version with just enough features to satisfy early customers and provide feedback for future development.
+
+|[[NestJS]]NestJS
+|A progressive Node.js framework for building efficient, scalable server-side applications using TypeScript.
+
+|[[PII]]PII
+|Personally Identifiable Information - Any data that could potentially identify a specific individual. Not collected on kids platforms.
+
+|[[Rive]]Rive
+|A real-time interactive design and animation tool used for character animations with state machines and lip-sync capabilities.
+
+|[[SSG]]SSG
+|Static Site Generation - Pre-rendering pages at build time for improved performance and SEO.
+
+|[[STT]]STT
+|Speech-to-Text - Technology that converts spoken language into written text. Implemented using Whisper API.
+
+|[[TLS]]TLS
+|Transport Layer Security - Cryptographic protocol designed to provide communications security over a network.
+
+|[[TTS]]TTS
+|Text-to-Speech - Technology that converts written text into spoken audio. Implemented using ElevenLabs.
+
+|[[TTL]]TTL
+|Time To Live - The duration for which data remains valid in cache or memory before expiration.
+
+|[[WCAG]]WCAG
+|Web Content Accessibility Guidelines - International standards for making web content more accessible.
+
+|===
+
+////
+To reference a TERM in the documentation, use the following syntax:
+<<../01_introduction_and_goals/04_glossary.adoc#COPPA, COPPA>>
+////

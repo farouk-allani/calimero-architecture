@@ -1,0 +1,228 @@
+= Data Protection and Privacy
+
+== Overview
+The Calimero Platform operates under strict data protection requirements, with COPPA compliance being the primary regulatory framework for the kids platform. The adult platform follows GDPR principles for European users.
+
+== Regulatory Framework
+
+=== COPPA (Children's Online Privacy Protection Act)
+The kids platform (kids.calimero.com and mobile app) is fully COPPA compliant:
+
+[cols="2,4", options="header"]
+|===
+|COPPA Requirement |Implementation
+
+|No data collection from children under 13
+|Zero personal data collected - no accounts, no forms, no cookies
+
+|Verifiable parental consent
+|Not required as no data is collected
+
+|Privacy policy accessible
+|Clear, child-friendly privacy notice available
+
+|Parental access to data
+|No data to access - fully ephemeral
+
+|Secure data handling
+|No data stored - all conversations in-memory only
+|===
+
+=== GDPR (General Data Protection Regulation)
+The adult platform complies with GDPR for EU users:
+
+* Explicit consent for data collection
+* Right to access, rectify, and delete data
+* Data portability support
+* Privacy by design and default
+* Data Processing Agreements with all vendors
+
+== Data Classification
+
+[cols="1,2,2,2", options="header"]
+|===
+|Category |Examples |Kids Platform |Adult Platform
+
+|Public
+|Product info, content
+|Allowed
+|Allowed
+
+|Internal
+|Analytics, logs (no PII)
+|Anonymized only
+|Allowed
+
+|Confidential
+|User emails, orders
+|PROHIBITED
+|Encrypted storage
+
+|Restricted
+|Payment data, passwords
+|PROHIBITED
+|PCI-compliant handling
+
+|Chat Content
+|AI conversations
+|Never stored
+|Never stored
+|===
+
+== Kids Platform Data Handling
+
+=== Zero Data Collection Policy
+The kids platform implements a strict zero data collection policy:
+
+* **No Cookies**: No cookies of any kind set
+* **No Local Storage**: No browser storage used
+* **No User Accounts**: All features accessible anonymously
+* **No Forms**: No input fields for personal information
+* **No Tracking**: No analytics that could identify users
+* **No Chat History**: All AI conversations are ephemeral
+
+=== Analytics (Cookieless)
+Plausible Analytics is used for aggregate insights:
+
+* Page views by URL
+* Geographic region (country level only)
+* Device type and browser
+* Referrer source
+* No user identification possible
+
+=== Session Data
+Session data is stored in Redis with strict controls:
+
+* TTL-based automatic expiration (30 minutes)
+* No association with user identity
+* Contains only conversation context (not content)
+* Automatically deleted on session end
+
+== Adult Platform Data Handling
+
+=== Data Collected
+[cols="2,2,2", options="header"]
+|===
+|Data Type |Purpose |Retention
+
+|Email address
+|Account authentication, order confirmations
+|Until account deletion
+
+|Name
+|Order shipping, personalization
+|Until account deletion
+
+|Shipping address
+|Order fulfillment
+|Until account deletion
+
+|Payment method
+|Processed by Stripe/PayPal (not stored)
+|Not stored locally
+
+|Order history
+|Customer service, recommendations
+|7 years (legal requirement)
+
+|Preferences
+|Wishlist, notifications
+|Until account deletion
+|===
+
+=== User Rights
+Users can exercise their rights via account settings or support:
+
+* **Access**: Download all personal data
+* **Rectification**: Edit profile information
+* **Erasure**: Delete account and all data
+* **Portability**: Export data in JSON format
+* **Object**: Opt-out of marketing
+
+== AI Conversation Privacy
+
+AI conversations are treated with the highest privacy standards:
+
+=== What Happens to Conversations
+1. User input received
+2. Processed through safety filters (not logged)
+3. Sent to LLM provider (see vendor section)
+4. Response delivered to user
+5. Context held in memory (TTL)
+6. **Automatically deleted after session**
+
+=== What Is NEVER Done
+* Conversations are never stored in databases
+* Conversations are never used for training
+* Conversations are never logged
+* Audio files are never saved
+* No human reviews conversation content
+
+== Vendor Data Processing
+
+[cols="2,2,3", options="header"]
+|===
+|Vendor |Data Shared |Safeguards
+
+|Together AI / Claude
+|Conversation text (no PII)
+|DPA signed, no training on data, auto-delete
+
+|ElevenLabs
+|TTS text only
+|DPA signed, no storage
+
+|Whisper API
+|Audio for transcription
+|DPA signed, immediate deletion
+
+|Plausible Analytics
+|Aggregate page views
+|No PII, EU hosting
+
+|Stripe/PayPal
+|Payment processing
+|PCI DSS compliant, no card storage
+
+|Shopify
+|E-commerce data
+|DPA signed, GDPR compliant
+|===
+
+== Data Protection Impact Assessment
+
+A DPIA was conducted covering:
+
+* AI interaction with children
+* Voice data processing
+* Cross-border data transfers
+* Third-party vendor risks
+
+Key findings and mitigations:
+
+[cols="2,4", options="header"]
+|===
+|Risk |Mitigation
+
+|Child data collection
+|Zero collection policy implemented
+
+|AI safety
+|Multi-layer safety filtering, topic boundaries
+
+|Voice data misuse
+|Immediate deletion, no storage
+
+|Vendor data handling
+|DPAs with all vendors, regular audits
+|===
+
+== Breach Response Plan
+
+In the unlikely event of a data breach:
+
+1. **Immediate**: Contain and assess scope
+2. **Within 24 hours**: Notify legal and executive team
+3. **Within 72 hours**: Report to supervisory authority (GDPR)
+4. **ASAP**: Notify affected users if high risk
+5. **Post-incident**: Review and improve controls

@@ -1,0 +1,196 @@
+= Testing Levels
+
+== Overview
+The Calimero Platform implements a comprehensive multi-level testing strategy following the testing pyramid approach, with additional emphasis on AI safety validation.
+
+== Test Pyramid
+
+[plantuml, format=png]
+----
+@startuml
+skinparam monochrome true
+
+rectangle "E2E Tests" as e2e #lightgray
+rectangle "Integration Tests" as integration #gray
+rectangle "Unit Tests" as unit #darkgray
+
+e2e -[hidden]down- integration
+integration -[hidden]down- unit
+
+note right of e2e : ~10% of tests\nCritical user journeys
+note right of integration : ~30% of tests\nAPI & service integration
+note right of unit : ~60% of tests\nBusiness logic, components
+
+@enduml
+----
+
+== Level 1: Unit Tests
+
+=== Coverage Targets
+[cols="2,2,3", options="header"]
+|===
+|Module |Target Coverage |Focus Areas
+
+|AI Safety Filters
+|95%+
+|Input validation, output filtering, topic boundaries
+
+|Business Logic
+|85%+
+|Session management, parental controls
+
+|UI Components
+|80%+
+|React/React Native components
+
+|Utilities
+|90%+
+|Shared helper functions
+|===
+
+=== Technologies
+* **Backend**: Jest + Supertest (NestJS)
+* **Frontend Web**: Jest + React Testing Library
+* **Mobile**: Jest + React Native Testing Library
+
+== Level 2: Integration Tests
+
+=== API Integration
+* Backend service communication
+* External API mocking (LLM, TTS, STT)
+* Database/Redis operations
+* CMS integration
+
+=== Component Integration
+* Multi-component workflows
+* State management flows
+* Navigation flows
+
+=== Technologies
+* Backend: Jest + Supertest with test containers
+* Frontend: Playwright component testing
+* Mobile: Detox integration tests
+
+== Level 3: End-to-End Tests
+
+=== Critical User Journeys
+
+[cols="1,3,2", options="header"]
+|===
+|ID |Journey |Platform
+
+|E2E-001
+|Child opens app → selects character → has voice conversation → session ends
+|Mobile App
+
+|E2E-002
+|Child visits website → plays game → chats with AI → parent sets time limit
+|Kids Website
+
+|E2E-003
+|Parent sets parental controls → child uses platform → time limit enforced
+|Cross-platform
+
+|E2E-004
+|Adult browses → creates account → adds to wishlist → checkout → order confirmation
+|Adult Website
+
+|E2E-005
+|Voice AI conversation with emergency detection trigger → appropriate response
+|Mobile App
+|===
+
+=== Technologies
+* Web: Playwright
+* Mobile: Detox
+* API: Postman/Newman
+
+== Level 4: Safety Testing (Special Focus)
+
+Due to the child-focused nature of the platform, safety testing receives dedicated attention:
+
+=== Input Safety Tests
+* Attempt to inject PII
+* Profanity and inappropriate language
+* Harmful content injection
+* External link injection
+* Manipulation attempts
+
+=== Output Safety Tests
+* Verify AI never asks for PII
+* Verify topic boundary enforcement
+* Verify emergency detection works
+* Verify responses are age-appropriate
+
+=== COPPA Compliance Tests
+* No cookies set on kids platform
+* No tracking pixels loaded
+* No forms collecting PII
+* No persistent storage of user data
+* Parental controls require PIN
+
+== Level 5: Performance Tests
+
+=== Load Testing Scenarios
+[cols="2,2,2,2", options="header"]
+|===
+|Scenario |Virtual Users |Duration |Success Criteria
+
+|Normal Load
+|500 concurrent
+|30 minutes
+|p95 < 500ms, 0% errors
+
+|Peak Load
+|2000 concurrent
+|15 minutes
+|p95 < 1000ms, <0.1% errors
+
+|Stress Test
+|3000 concurrent
+|5 minutes
+|Graceful degradation, no crashes
+
+|Endurance
+|500 concurrent
+|4 hours
+|No memory leaks, stable performance
+|===
+
+=== Voice AI Latency Testing
+* STT processing time
+* LLM inference time
+* TTS generation time
+* End-to-end voice round trip
+
+== Test Environment Matrix
+
+[cols="1,2,2,2", options="header"]
+|===
+|Level |Environment |Data |Execution
+
+|Unit
+|Local / CI
+|Mocked
+|Every commit
+
+|Integration
+|CI / Staging
+|Test fixtures
+|Every PR
+
+|E2E
+|Staging
+|Seeded data
+|Daily / Pre-release
+
+|Safety
+|Staging
+|Adversarial inputs
+|Weekly / Pre-release
+
+|Performance
+|Performance env
+|Production-like
+|Weekly / Pre-release
+|===

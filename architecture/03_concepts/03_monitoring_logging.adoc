@@ -1,0 +1,210 @@
+= Monitoring and Logging
+
+== Overview
+The Calimero Platform implements comprehensive monitoring and logging with strict privacy requirements. No Personally Identifiable Information (PII) is logged, especially for the kids platform.
+
+== Logging Architecture
+
+=== Structured Logging
+All logs use JSON format for easy parsing and analysis:
+
+```json
+{
+  "timestamp": "2025-12-17T10:30:00.000Z",
+  "level": "info",
+  "service": "ai-orchestrator",
+  "correlationId": "abc123",
+  "event": "ai_response_generated",
+  "characterId": "calimero",
+  "responseTimeMs": 450,
+  "platform": "kids-web"
+}
+```
+
+=== Log Levels
+[cols="1,3,2", options="header"]
+|===
+|Level |Usage |Retention
+
+|ERROR
+|System errors, failed requests, critical issues
+|90 days
+
+|WARN
+|Safety filter triggers, rate limits, degraded performance
+|60 days
+
+|INFO
+|Normal operations, feature usage, business events
+|30 days
+
+|DEBUG
+|Detailed technical information (staging only)
+|7 days
+|===
+
+=== Privacy-Safe Logging
+
+**NEVER logged:**
+* User conversations or chat content
+* Voice audio data
+* Personal identifiers (names, emails)
+* IP addresses (hashed only)
+* Device identifiers (anonymized)
+
+**Always logged:**
+* Correlation IDs for request tracing
+* Anonymized session identifiers
+* Performance metrics
+* Error details (sanitized)
+* Feature usage (aggregate)
+
+== Metrics Collection
+
+=== Application Metrics
+[cols="2,2,3", options="header"]
+|===
+|Metric |Type |Description
+
+|`http_requests_total`
+|Counter
+|Total HTTP requests by endpoint, method, status
+
+|`http_request_duration_seconds`
+|Histogram
+|Request latency distribution
+
+|`ai_inference_duration_seconds`
+|Histogram
+|LLM response time
+
+|`voice_pipeline_duration_seconds`
+|Histogram
+|End-to-end voice processing time
+
+|`safety_filter_triggers_total`
+|Counter
+|Safety filter activations by type
+
+|`active_sessions`
+|Gauge
+|Current active AI sessions
+
+|`ai_cost_cents`
+|Counter
+|Estimated AI API costs
+|===
+
+=== Business Metrics
+[cols="2,3", options="header"]
+|===
+|Metric |Description
+
+|Daily Active Users (DAU)
+|Unique sessions per platform per day
+
+|Session Duration
+|Average time spent in AI conversations
+
+|Character Popularity
+|Distribution of AI character selections
+
+|Feature Usage
+|Games played, videos watched, chats initiated
+
+|Conversion Rate
+|Adult site: visitors to purchases
+|===
+
+== Monitoring Dashboards
+
+=== Platform Health Dashboard
+* Request rate and error rate
+* Response time percentiles (p50, p95, p99)
+* Active sessions by platform
+* Infrastructure utilization (CPU, memory)
+
+=== AI Performance Dashboard
+* LLM inference latency
+* Voice pipeline latency breakdown
+* Provider availability status
+* Cost tracking per provider
+
+=== Safety Dashboard (Restricted Access)
+* Safety filter trigger frequency
+* Emergency detection events
+* Topic boundary violations
+* Trend analysis for patterns
+
+=== Business Dashboard
+* User engagement metrics
+* Feature adoption rates
+* Geographic distribution
+* Platform comparison
+
+== Alerting Rules
+
+[cols="2,2,2,2", options="header"]
+|===
+|Alert |Condition |Severity |Response
+
+|High Error Rate
+|>1% of requests failing
+|Critical
+|Page on-call, investigate immediately
+
+|Slow Response Time
+|p95 >1s for 5 minutes
+|Warning
+|Investigate, scale if needed
+
+|LLM Provider Down
+|No successful responses for 1 minute
+|Critical
+|Trigger failover, page on-call
+
+|High Safety Triggers
+|>50 triggers/hour
+|Warning
+|Review patterns, adjust filters
+
+|Emergency Detection
+|Any emergency trigger
+|High
+|Review event, assess patterns
+
+|Redis Connection Failed
+|Connection errors >10/minute
+|Critical
+|Restart service, investigate
+|===
+
+== Incident Response
+
+=== Severity Levels
+[cols="1,3,2", options="header"]
+|===
+|Level |Description |Response Time
+
+|P1 - Critical
+|Platform down, security breach, safety incident
+|<15 minutes
+
+|P2 - High
+|Major feature broken, significant degradation
+|<1 hour
+
+|P3 - Medium
+|Minor feature issue, limited impact
+|<4 hours
+
+|P4 - Low
+|Cosmetic issues, minor bugs
+|Next business day
+|===
+
+=== On-Call Rotation
+* 24/7 on-call rotation for P1/P2 issues
+* Escalation path: On-call → Tech Lead → CTO
+* Runbooks for common incidents
+* Post-incident reviews for all P1/P2 events

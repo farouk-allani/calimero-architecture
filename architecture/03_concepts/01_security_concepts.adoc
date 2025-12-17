@@ -1,0 +1,135 @@
+= Security Concept
+
+== Overview
+The Calimero Platform implements a defense-in-depth security strategy with particular emphasis on child safety and COPPA compliance. All security measures are designed to protect both children and adults while enabling the platform's AI-powered features.
+
+== Transport Security
+
+* All external communication encrypted using TLS 1.3
+* HTTPS enforced on all endpoints with HSTS headers
+* Certificate pinning implemented in mobile app
+* Cloudflare SSL termination with origin certificates
+
+== Authentication & Authorization
+
+[cols="2,4", options="header"]
+|===
+|Platform |Authentication Method
+
+|Kids Website
+|No authentication required (COPPA compliance)
+
+|Adult Website
+|NextAuth.js with JWT tokens, social OAuth providers (Google, Apple, Facebook)
+
+|Kids Mobile App
+|No user authentication, device-based session only
+
+|Parental Dashboard
+|PIN-based access (4-6 digits), stored as bcrypt hash
+
+|Backend API
+|API key for internal services, JWT for authenticated endpoints
+|===
+
+== AI Safety Architecture
+
+The AI safety layer is the most critical security component, implementing multiple protective measures:
+
+=== Input Filtering
+* Sanitization of potentially harmful content
+* PII detection and removal (names, locations, schools)
+* Length and format validation
+* Profanity and inappropriate content filtering
+* Rate limiting per session
+
+=== Output Filtering
+* Content moderation validation before delivery
+* Topic boundary enforcement
+* Response sanitization
+* Emergency trigger detection (harm/danger mentions)
+
+=== Topic Boundaries
+[cols="1,1", options="header"]
+|===
+|Allowed Topics |Blocked Topics
+
+|Show characters and stories
+|Personal information requests
+
+|Friendship and emotions
+|Location or school information
+
+|Hobbies and interests
+|Family details
+
+|Learning and education
+|External links or downloads
+
+|Imagination and creativity
+|Violence or inappropriate content
+
+|Feelings and emotions
+|Commercial manipulation
+|===
+
+=== Emergency Response Protocol
+When the system detects potential harm/danger indicators:
+
+1. Immediately provide supportive, age-appropriate response
+2. Encourage child to speak with trusted adult
+3. Log event (without PII) for review
+4. Continue session with heightened monitoring
+
+== CORS Policy
+
+* Strict whitelist-based origin validation
+* Kids site: Only kids.calimero.com allowed
+* Adult site: calimero.com + payment provider domains
+* No wildcard origins permitted
+
+== Data Security
+
+=== Kids Platform (Zero Data)
+* No cookies or localStorage
+* No user accounts or persistent data
+* All conversations ephemeral (in-memory only)
+* No tracking pixels or analytics cookies
+* Plausible analytics (cookieless)
+
+=== Adult Platform
+* User data encrypted at rest (AES-256)
+* Payment processing via PCI-compliant providers
+* Session data with secure, httpOnly cookies
+* Password hashing with bcrypt (cost factor 12)
+
+== Infrastructure Security
+
+* DDoS protection via Cloudflare
+* Web Application Firewall (WAF) rules
+* Rate limiting at CDN and application level
+* Secrets management (environment variables, never in code)
+* Regular security dependency scanning (npm audit)
+
+== Security Audits
+
+[cols="2,2,2", options="header"]
+|===
+|Audit Type |Frequency |Scope
+
+|COPPA Compliance Audit
+|Before launch + annually
+|Kids website and mobile app
+
+|Penetration Testing
+|Quarterly
+|All public endpoints
+
+|AI Safety Review
+|Monthly
+|Input/output filter effectiveness
+
+|Dependency Scan
+|Weekly (automated)
+|All npm packages
+|===

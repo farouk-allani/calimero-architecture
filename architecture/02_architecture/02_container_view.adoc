@@ -1,0 +1,186 @@
+= Container View
+
+== Overview
+[NOTE]
+====
+This diagram shows the container images and their interactions within the Calimero Digital Platform.
+Containers represent deployable units that execute code or store data.
+====
+
+// tag::developer[]
+== Container Diagram
+[plantuml, format=png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Container Diagram for Calimero Digital Platform
+
+Person(child, "Child User", "Ages 4-12")
+Person(parent, "Parent/Guardian", "Manages child's experience")
+Person(adult, "Adult User", "Ages 18-50")
+
+System_Boundary(calimero, "Calimero Platform") {
+    Container(kidsWebApp, "Kids Web Application", "Next.js 14, TypeScript, Tailwind", "COPPA-compliant kids experience with games, videos, and AI chat")
+    Container(adultWebApp, "Adult Web Application", "Next.js 14, TypeScript, Tailwind", "E-commerce, culture content, AI generator with user accounts")
+    Container(mobileApp, "Kids Mobile App", "React Native, TypeScript, Rive", "Voice AI companions with animations for iOS & Android")
+    
+    Container(apiGateway, "API Gateway", "NestJS, TypeScript", "Request validation, rate limiting, authentication routing")
+    Container(aiOrchestrator, "AI Orchestrator", "NestJS Module", "Character prompt injection, session memory (TTL), LLM abstraction")
+    Container(safetyModule, "Safety & Moderation", "NestJS Module", "Input/output filtering, topic boundaries, emergency detection")
+    Container(voicePipeline, "Voice Pipeline", "NestJS Module", "STT adapter, TTS adapter, audio stream normalization")
+    Container(parentalControls, "Parental Controls", "NestJS Module", "Time limits, feature toggles, PIN verification")
+    Container(contentService, "Content Delivery", "NestJS Module", "CMS proxy, locale resolution, content caching")
+    
+    ContainerDb(sessionCache, "Session Cache", "Redis", "Ephemeral session memory (TTL-based)")
+}
+
+System_Ext(llmApi, "LLM API", "Together AI / Claude")
+System_Ext(sttApi, "Whisper API", "Speech-to-Text")
+System_Ext(ttsApi, "ElevenLabs", "Text-to-Speech")
+System_Ext(cms, "Headless CMS", "Sanity / Contentful")
+System_Ext(ecommerce, "E-commerce", "Shopify / Medusa")
+System_Ext(videoService, "Mux", "Video streaming")
+
+Rel(child, kidsWebApp, "Uses", "HTTPS")
+Rel(child, mobileApp, "Uses", "HTTPS")
+Rel(parent, kidsWebApp, "Manages controls", "HTTPS")
+Rel(parent, mobileApp, "Manages controls", "HTTPS")
+Rel(adult, adultWebApp, "Uses", "HTTPS")
+
+Rel(kidsWebApp, apiGateway, "API calls", "HTTPS/REST")
+Rel(adultWebApp, apiGateway, "API calls", "HTTPS/REST")
+Rel(mobileApp, apiGateway, "API calls", "HTTPS/REST")
+
+Rel(apiGateway, aiOrchestrator, "AI requests", "Internal")
+Rel(apiGateway, contentService, "Content requests", "Internal")
+Rel(apiGateway, parentalControls, "Control requests", "Internal")
+
+Rel(aiOrchestrator, safetyModule, "Filter requests", "Internal")
+Rel(aiOrchestrator, voicePipeline, "Voice processing", "Internal")
+Rel(aiOrchestrator, sessionCache, "Session data", "Redis Protocol")
+
+Rel(aiOrchestrator, llmApi, "Inference", "HTTPS")
+Rel(voicePipeline, sttApi, "Transcription", "HTTPS")
+Rel(voicePipeline, ttsApi, "Synthesis", "HTTPS")
+Rel(contentService, cms, "Content fetch", "HTTPS")
+
+Rel(adultWebApp, ecommerce, "Product data", "HTTPS")
+Rel(kidsWebApp, videoService, "Video stream", "HTTPS")
+Rel(mobileApp, videoService, "Video stream", "HTTPS")
+
+@enduml
+----
+
+== Description of Containers
+
+=== Kids Web Application
+
+The kids web application (kids.calimero.com) is a completely separate Next.js 14 application optimized for children ages 4-12. It features:
+
+* **Framework**: Next.js 14 with App Router
+* **Styling**: Tailwind CSS with child-friendly design system (bright colors, large fonts, bouncy animations)
+* **Analytics**: Cookieless analytics only (Plausible) for COPPA compliance
+* **Features**: Games, videos, AI text chat, character profiles
+* **Data Policy**: Zero cookies, zero tracking, no user accounts
+
+Design decisions:
+* Static Site Generation (SSG) for all public pages
+* Incremental Static Regeneration (ISR) for content updates
+* Large touch targets (48px+) for young users
+* Icon-heavy navigation with minimal text
+
+=== Adult Web Application
+
+The adult web application (calimero.com) serves nostalgia seekers, collectors, and culture enthusiasts with full e-commerce capabilities:
+
+* **Framework**: Next.js 14 with App Router
+* **Authentication**: NextAuth.js with social logins
+* **E-commerce**: Shopify Storefront API integration
+* **Analytics**: Full GA4 and Meta Pixel integration
+* **Features**: Shop, drops, culture, AI generator, accounts
+
+Design decisions:
+* Sleek, minimal streetwear aesthetic (black, white, yellow accents)
+* Quick checkout (Apple Pay, Google Pay, PayPal)
+* Multi-currency support (EUR, USD, GBP, JPY)
+
+=== Kids Mobile App
+
+The premium kids experience with voice AI companions:
+
+* **Framework**: React Native with TypeScript
+* **Animation**: Rive for real-time character lip-sync
+* **Platforms**: iOS 15+ and Android 10+
+* **Storage**: Secure local storage (settings only, no chat history)
+
+Features:
+* Voice conversations with 5 AI characters
+* Interactive bedtime stories
+* Games with voice feedback
+* Offline episode downloads (parent permission required)
+
+=== API Gateway
+
+The entry point for all client requests, implemented as a NestJS module:
+
+* Request validation and sanitization
+* Rate limiting per client type
+* Authentication routing (adult site only)
+* CORS enforcement with whitelisted origins
+
+=== AI Orchestrator
+
+The core module managing AI character interactions:
+
+* Character persona injection based on selected companion
+* Session memory management with TTL-based expiration
+* LLM provider abstraction for failover capability
+* Response streaming for low-latency delivery
+
+=== Safety & Moderation Module
+
+Critical module ensuring child-safe AI interactions:
+
+* **Input Filtering**: Sanitizes user input before LLM processing
+* **Output Filtering**: Validates AI responses before delivery
+* **Topic Boundaries**: Restricts conversations to safe topics
+* **Emergency Detection**: Identifies potential harm/danger mentions and triggers appropriate responses
+
+=== Voice Pipeline
+
+Handles speech-to-text and text-to-speech operations:
+
+* STT adapter for Whisper API integration
+* TTS adapter for ElevenLabs with character-specific voices
+* Audio stream normalization
+* Latency optimization with streaming
+
+=== Parental Controls Module
+
+Manages parental settings and restrictions:
+
+* PIN verification for dashboard access
+* Daily time limit enforcement
+* Feature toggle management
+* Activity summary generation (no PII, no chat content)
+
+=== Content Delivery Service
+
+Handles CMS integration and content caching:
+
+* Locale resolution (IT, FR, EN)
+* Content caching for performance
+* Proxy to headless CMS APIs
+
+=== Session Cache (Redis)
+
+In-memory session storage:
+
+* Ephemeral conversation context
+* TTL-based automatic expiration
+* No persistent storage of chat data
+
+// end::developer[]

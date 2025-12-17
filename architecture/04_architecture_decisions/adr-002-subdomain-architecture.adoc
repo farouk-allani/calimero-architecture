@@ -1,0 +1,55 @@
+= ADR 002: Subdomain Architecture for Audience Separation
+
+*Status*: Accepted
+
+*Date*: December 2025
+
+*Context*:
+The Calimero Platform must serve two fundamentally different audiences with opposing requirements:
+
+* **Children (Ages 4-12)**: COPPA compliance, zero data collection, safe content, playful design
+* **Adults (Ages 18-50)**: E-commerce, user accounts, analytics, sophisticated design
+
+Options considered:
+
+1. **Single site with age gate** - One codebase, user selects audience type
+2. **Subdomain model (LEGO style)** - Separate sites: kids.calimero.com + calimero.com
+3. **Completely separate domains** - Different domains entirely
+4. **Single site with dynamic content** - Same site, different content based on context
+
+*Decision:*
+We will implement the **subdomain model** with completely separate deployments:
+
+* `kids.calimero.com` - Dedicated kids experience
+* `calimero.com` - Adult/commerce site
+
+A pop-up gate on first visit to calimero.com allows users to choose their experience.
+
+Rationale:
+* Clear technical and legal separation for COPPA compliance
+* Separate deployments enable independent scaling and updates
+* Follows proven model (LEGO, Disney, etc.)
+* Simplifies compliance audits (kids site is isolated)
+* Different design systems without conflicts
+* Independent performance optimization
+
+*Consequences*:
+
+Positive:
+* Complete COPPA compliance isolation
+* Independent deployment and scaling
+* Clear audit boundaries
+* Separate analytics and tracking (none for kids)
+* Team can work on sites independently
+
+Negative:
+* Two codebases to maintain
+* Shared components need careful management
+* Cross-site navigation requires explicit handling
+* Two Vercel deployments (additional cost)
+
+Mitigation:
+* Shared component library for common elements
+* Monorepo structure for code sharing
+* Clear documentation of shared vs. site-specific code
+* Consistent API contract between frontends and backend

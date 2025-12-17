@@ -1,0 +1,133 @@
+= Testing Scope
+
+The testing team will execute validation of changes across all Calimero platform components, with special emphasis on child safety, COPPA compliance, and AI interaction quality.
+
+== Scope of Testing
+
+=== Functional Testing
+* AI Companion Interactions (text and voice)
+* Safety Filter Effectiveness
+* Parental Control Features
+* E-commerce Functionality (adult site)
+* Content Management Integration
+* Multi-language Support (IT, FR, EN)
+
+=== Non-Functional Testing
+* Performance and Load Testing
+* Security Testing
+* Accessibility Testing
+* COPPA Compliance Verification
+* Cross-browser/Device Compatibility
+
+== Test Platforms
+
+=== Web Platforms
+* **Kids Website** (kids.calimero.com)
+  - Chrome, Firefox, Safari, Edge (latest 2 versions)
+  - Desktop and tablet viewports
+  - Touch and mouse interactions
+
+* **Adult Website** (calimero.com)
+  - Chrome, Firefox, Safari, Edge (latest 2 versions)
+  - Desktop, tablet, and mobile viewports
+  - E-commerce checkout flows
+
+=== Mobile Platforms
+* **iOS**: iPhone 12+, iPad (iOS 15+)
+* **Android**: Samsung Galaxy S21+, Pixel 6+ (Android 10+)
+* **Tablets**: iPad Air, Samsung Galaxy Tab
+
+== Testing Tools
+
+[cols="2,3,2", options="header"]
+|===
+|Category |Tool |Purpose
+
+|Test Management
+|TestRail / Azure DevOps
+|Test case management, execution tracking
+
+|Web Automation
+|Playwright + TypeScript
+|E2E testing for web platforms
+
+|Mobile Automation
+|Detox (React Native)
+|E2E testing for mobile app
+
+|API Testing
+|Postman / Newman
+|Backend API validation
+
+|Performance
+|k6 + Grafana
+|Load testing and performance monitoring
+
+|Security
+|OWASP ZAP
+|Security vulnerability scanning
+
+|Accessibility
+|axe DevTools
+|WCAG compliance verification
+
+|Visual Testing
+|Percy / Chromatic
+|Visual regression detection
+|===
+
+== Test Types
+
+=== End-to-End Testing
+Testing complete user journeys across the platform:
+* Child plays game → chats with AI → watches video
+* Parent sets controls → child uses platform → parent reviews activity
+* Adult browses → adds to cart → completes checkout
+
+=== Functional Testing
+Validation of all features against requirements:
+* AI character conversations (all 5 characters)
+* Game functionality and scoring
+* Video playback and controls
+* Parental dashboard operations
+* E-commerce transactions
+
+=== Safety Testing (Critical)
+Dedicated testing of child safety features:
+* Input filter effectiveness
+* Output filter effectiveness
+* Topic boundary enforcement
+* Emergency detection accuracy
+* PII prevention
+
+=== Non-Functional Testing
+
+==== Performance Testing
+* **Load Testing**: Up to 2000 concurrent users
+* **Response Time**: <1s for 95% of requests
+* **Voice Latency**: <2s end-to-end
+* **Page Load**: <2.5s LCP
+
+==== Security Testing
+* OWASP Top 10 vulnerability scanning
+* API security testing
+* Authentication/authorization testing
+* Data leakage prevention
+
+== Supported Configurations
+
+=== Mobile Devices (Primary)
+* iOS 15+ (iPhone, iPad)
+* Android 10+ (phones and tablets)
+
+=== Browsers (Primary)
+* Chrome 100+
+* Safari 15+
+* Firefox 100+
+* Edge 100+
+
+=== Network Conditions
+* 4G / LTE
+* WiFi (stable)
+* 3G (degraded - graceful fallback)
+

@@ -1,0 +1,138 @@
+= System Context
+
+== Overview
+
+[NOTE]
+This diagram shows the systems that are communicating and interacting within the scope of the Calimero Digital Platform.
+The platform serves two distinct audiences (children and adults) through separate web properties and a dedicated mobile application.
+
+== Context Diagram
+// tag::architect[]
+[plantuml, format=png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title System Context Diagram for Calimero Digital Platform
+
+Person(child, "Child User", "Ages 4-12, interacts with safe AI companions, games, and videos")
+Person(parent, "Parent/Guardian", "Manages parental controls, monitors activity, makes purchases")
+Person(adult, "Adult User", "Ages 18-50, shops merchandise, engages with nostalgia content")
+
+Enterprise_Boundary(calimero, "Calimero Platform") {
+    System(kidsWeb, "Kids Website", "kids.calimero.com - COPPA-compliant web experience with AI chat, games, videos")
+    System(adultWeb, "Adult Website", "calimero.com - E-commerce, culture, AI generator, nostalgia content")
+    System(mobileApp, "Kids Mobile App", "React Native app with voice AI companions and Rive animations")
+    System(backend, "Calimero Backend", "NestJS API server handling AI orchestration, safety filtering, and business logic")
+}
+
+System_Ext(llmApi, "LLM API", "Together AI / Claude - Language model for AI character conversations")
+System_Ext(sttApi, "Speech-to-Text API", "Whisper API - Converts child's speech to text")
+System_Ext(ttsApi, "Text-to-Speech API", "ElevenLabs - Character voice synthesis with custom voices")
+System_Ext(cms, "Headless CMS", "Sanity / Contentful - Content management for all platforms")
+System_Ext(ecommerce, "E-commerce Platform", "Shopify / Medusa - Product catalog and checkout")
+System_Ext(videoService, "Video Platform", "Mux - Video streaming with parental controls")
+System_Ext(analytics, "Analytics", "GA4, Meta Pixel - Adult site analytics only")
+
+Rel(child, kidsWeb, "Plays games, watches videos, chats with AI", "HTTPS")
+Rel(child, mobileApp, "Voice conversations with AI companions", "HTTPS")
+Rel(parent, kidsWeb, "Manages parental controls", "HTTPS + PIN")
+Rel(parent, mobileApp, "Sets time limits, feature toggles", "HTTPS + PIN")
+Rel(adult, adultWeb, "Shops, browses culture, uses AI generator", "HTTPS")
+
+Rel(kidsWeb, backend, "API requests", "HTTPS/REST")
+Rel(adultWeb, backend, "API requests", "HTTPS/REST")
+Rel(mobileApp, backend, "API requests", "HTTPS/REST")
+
+Rel(backend, llmApi, "AI inference requests", "HTTPS")
+Rel(backend, sttApi, "Audio transcription", "HTTPS")
+Rel(backend, ttsApi, "Voice synthesis", "HTTPS")
+Rel(backend, cms, "Content retrieval", "HTTPS")
+
+Rel(adultWeb, ecommerce, "Product data, checkout", "HTTPS")
+Rel(kidsWeb, videoService, "Stream episodes", "HTTPS")
+Rel(mobileApp, videoService, "Stream episodes", "HTTPS")
+Rel(adultWeb, analytics, "User analytics", "HTTPS")
+
+@enduml
+----
+
+== Key Elements
+
+=== Child User
+Children ages 4-12 are the primary users of the kids website and mobile app. They interact with AI character companions, play educational games, watch Calimero episodes, and engage in creative activities. All interactions are designed to be safe, moderated, and COPPA-compliant. Voice interactions are only available in the mobile app.
+
+Key features accessed:
+* AI text chat (website) and voice chat (mobile app)
+* Games: memory match, puzzles, coloring, dress-up, quiz
+* Video content: episodes, clips, AI-generated shorts
+* Character profiles with animations and fun facts
+
+=== Parent/Guardian
+Parents access the parental dashboard on both the website and mobile app to manage their child's experience. They set time limits, enable/disable features, and can view activity summaries (without chat content). All parental controls are PIN-protected.
+
+Key features accessed:
+* Parental dashboard (PIN-protected)
+* Time limit configuration
+* Feature toggles (voice chat, downloads, specific characters)
+* Weekly activity summaries via email
+
+=== Adult User
+Adults ages 18-50 access calimero.com for merchandise shopping, nostalgic content, and AI-powered creative tools. They can create accounts, make purchases, and engage with the Calimero culture and community.
+
+Key features accessed:
+* E-commerce: merchandise, drops, wishlist
+* AI character generator and meme maker
+* Nostalgia content: classic episodes, history
+* Account management, order history
+
+=== Kids Website (kids.calimero.com)
+A completely separate, child-safe web experience with zero tracking or data collection. Features bright, playful design with large touch targets and icon-heavy navigation.
+
+Technical characteristics:
+* Next.js 14 with Static Site Generation
+* Cookieless analytics (Plausible)
+* No user accounts or persistent data
+* COPPA-compliant design and implementation
+
+Link to <<03_component_view.adoc#components, component view>> for detailed internal structure.
+
+=== Adult Website (calimero.com)
+The main commercial platform with full e-commerce capabilities, user accounts, and analytics. Features sleek, minimal streetwear aesthetic.
+
+Technical characteristics:
+* Next.js 14 with ISR for dynamic content
+* NextAuth.js for authentication
+* Full analytics integration (GA4, Meta Pixel)
+* E-commerce integration (Shopify/Medusa)
+
+=== Kids Mobile App
+A dedicated React Native application for iOS and Android featuring voice AI companions with Rive animations. This is the premium kids experience with advanced voice interaction capabilities.
+
+Technical characteristics:
+* React Native with TypeScript
+* Rive for real-time character animations
+* Native audio APIs for voice recording/playback
+* Secure local storage (settings only)
+
+=== Calimero Backend (NestJS)
+The centralized backend server handling all AI orchestration, safety filtering, content delivery, and business logic. All AI traffic is routed through this layer for consistent moderation and control.
+
+Link to relevant <<../05_deployment_view.adoc#_deployment_view, deployment>> documentation.
+
+=== External Systems
+
+==== LLM API (Together AI / Claude)
+External large language model service providing AI inference for character conversations. Selected for child-safety capabilities and provider abstraction for failover.
+
+Reference: <<../04_architecture_decisions/adr-001-llm-provider.adoc, ADR-001: LLM Provider Selection>>
+
+==== ElevenLabs TTS
+Text-to-speech service with custom voice training for each of the 5 AI characters. Provides natural, expressive voice synthesis with character-specific personalities.
+
+==== Whisper STT
+Speech-to-text service for converting children's voice input to text for LLM processing. Supports multiple languages and provides accurate transcription for young speakers.
+
+

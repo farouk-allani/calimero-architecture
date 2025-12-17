@@ -1,0 +1,72 @@
+= Architecture
+
+[NOTE]
+====
+List key constraints that influence architectural decisions. Keep this list updated as project constraints evolve.
+====
+
+// tag::architect[]
+== Technical Constraints
+
+- Must deliver separate web experiences for kids (COPPA-compliant) and adults (e-commerce enabled)
+- All AI interactions must route through centralized NestJS backend
+- No persistent storage of conversation data (ephemeral sessions only)
+- Mobile app must support iOS 15+ and Android 10+
+- Voice AI must integrate with external STT (Whisper) and TTS (ElevenLabs) services
+- Frontend must use Next.js 14 with TypeScript for SEO optimization
+- Kids platform must operate with zero cookies and no tracking pixels
+- Multi-language support required from launch (IT, FR, EN)
+// end::architect[]
+
+// tag::manager[]
+== Organizational Constraints
+
+- Development timeline fixed at 8 weeks for MVP launch
+- UX/UI designs must be finalized and approved before Sprint 0
+- Legal COPPA audit required before kids platform launch
+- App Store/Play Store approval process must be factored into timeline
+- Development team operates under Dar Blockchain management
+- Brand guidelines from Calimero IP holder must be followed strictly
+// end::manager[]
+
+// tag::developer[]
+== Conventions
+
+- TypeScript as primary language across all applications
+- Microservices architecture with clear domain boundaries
+- RESTful API design with JSON payloads
+- Component-based frontend architecture
+- Tailwind CSS for styling consistency
+- Comprehensive unit and integration testing (Jest, React Testing Library)
+- Git-based version control with pull request workflow
+- Semantic versioning for releases
+- AsciiDoc for technical documentation
+// end::developer[]
+
+== System Overview
+
+[cols="1,3", options="header"]
+|===
+|Layer |Components
+
+|Clients
+|Next.js Kids Web App, Next.js Adult Web App, React Native Mobile App
+
+|Backend
+|NestJS API Server (TypeScript)
+
+|External APIs
+|LLM API (Together AI/Claude), Speech-to-Text API (Whisper), Text-to-Speech API (ElevenLabs)
+
+|Infrastructure
+|Vercel (Web hosting), Dedicated Server (Backend), Cloudflare CDN
+
+|Data Storage
+|Headless CMS (Sanity/Contentful), In-memory session cache (Redis)
+|===
+
+[NOTE]
+====
+This section presents the static structure of the system using C4 model diagrams. Each level provides increasing detail about the software architecture. Update these diagrams when adding, removing, or significantly changing system components.
+====
+

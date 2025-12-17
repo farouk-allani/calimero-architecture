@@ -1,0 +1,371 @@
+= Runtime View
+
+[NOTE]
+====
+This documentation describes how components interact at runtime. It includes sequence diagrams showing the flow of key operations, state diagrams for session management, and detailed explanations of critical processes.
+====
+
+== AI Interaction Flow - Text Chat (Kids Website)
+
+The following sequence diagram shows how a child interacts with an AI character through the kids website text chat interface.
+
+[plantuml, format=png]
+----
+@startuml
+title Text Chat AI Interaction Flow
+
+actor "Child User" as child
+participant "Kids Website" as web
+participant "API Gateway" as gateway
+participant "Input Filter" as input
+participant "AI Orchestrator" as orchestrator
+participant "Session Manager" as session
+participant "LLM Adapter" as llm
+participant "Output Filter" as output
+database "Redis" as redis
+participant "LLM API" as llmApi
+
+child -> web: Types message
+web -> gateway: POST /api/chat
+gateway -> gateway: Validate request
+gateway -> input: Filter user input
+input -> input: Sanitize content
+input -> input: Check for PII
+input -> input: Validate length
+
+alt Input rejected
+    input --> gateway: Reject with safe message
+    gateway --> web: 400 Bad Request
+    web --> child: Show friendly error
+else Input accepted
+    input -> orchestrator: Cleaned message
+    orchestrator -> session: Get session context
+    session -> redis: GET session:{id}
+    redis --> session: Context (or empty)
+    
+    orchestrator -> orchestrator: Inject character persona
+    orchestrator -> orchestrator: Build prompt with context
+    
+    orchestrator -> llm: Generate response
+    llm -> llmApi: POST /completions
+    llmApi --> llm: AI response
+    
+    llm -> output: Raw response
+    output -> output: Validate content
+    output -> output: Check topic boundaries
+    output -> output: Format response
+    
+    alt Output rejected
+        output --> orchestrator: Trigger fallback response
+    else Output accepted
+        output --> orchestrator: Clean response
+    end
+    
+    orchestrator -> session: Update context
+    session -> redis: SET session:{id} (TTL)
+    
+    orchestrator --> gateway: Final response
+    gateway --> web: 200 OK + response
+    web --> child: Display AI message
+end
+
+@enduml
+----
+
+== Voice AI Interaction Flow (Mobile App)
+
+The complete voice interaction flow including speech-to-text, AI processing, and text-to-speech with Rive animations.
+
+[plantuml, format=png]
+----
+@startuml
+title Voice AI Interaction Flow
+
+actor "Child" as child
+participant "Mobile App" as app
+participant "Rive Animation" as rive
+participant "API Gateway" as gateway
+participant "Voice Pipeline" as voice
+participant "STT Adapter" as stt
+participant "AI Orchestrator" as ai
+participant "Safety Module" as safety
+participant "TTS Adapter" as tts
+participant "Whisper API" as whisper
+participant "LLM API" as llm
+participant "ElevenLabs" as eleven
+
+child -> app: Taps to speak
+app -> rive: Set state = "Listening"
+rive --> child: Character shows attention
+
+child -> app: Speaks message
+app -> gateway: POST /api/voice/chat
+note right: Audio stream upload
+
+gateway -> voice: Process audio
+voice -> stt: Transcribe audio
+stt -> whisper: POST audio
+whisper --> stt: Transcribed text
+
+stt -> safety: Validate text input
+safety -> safety: Input filtering
+safety --> stt: Cleaned text
+
+stt --> voice: Clean transcription
+voice -> ai: Process message
+
+ai -> ai: Character persona injection
+ai -> ai: Context management
+ai -> llm: Generate response
+llm --> ai: AI text response
+
+ai -> safety: Validate output
+safety --> ai: Safe response
+
+ai -> tts: Convert to speech
+tts -> eleven: POST text + voice_id
+eleven --> tts: Audio stream
+
+tts --> voice: Character audio
+
+voice --> gateway: Audio response
+gateway --> app: Streaming audio
+
+app -> rive: Set state = "Speaking"
+app -> rive: Audio amplitude data
+rive --> child: Lip-sync animation
+app --> child: Play character voice
+
+app -> rive: Set state = "Idle"
+rive --> child: Breathing animation
+
+@enduml
+----
+
+== Parental Control Session Flow
+
+Shows how parental controls are verified and applied across sessions.
+
+[plantuml, format=png]
+----
+@startuml
+title Parental Control Verification Flow
+
+actor "Parent" as parent
+actor "Child" as child
+participant "App/Website" as client
+participant "API Gateway" as gateway
+participant "Parental Service" as parental
+database "Settings Store" as settings
+
+== Parent Sets Controls ==
+parent -> client: Open parental dashboard
+client -> client: Request PIN
+parent -> client: Enter PIN
+client -> gateway: POST /api/parental/verify
+gateway -> parental: Verify PIN
+parental -> settings: GET parent settings
+settings --> parental: Settings
+parental --> gateway: PIN valid + settings
+gateway --> client: Dashboard access granted
+
+parent -> client: Set time limit = 1 hour
+client -> gateway: PUT /api/parental/settings
+gateway -> parental: Update settings
+parental -> settings: SAVE time_limit = 60min
+parental --> gateway: Settings updated
+gateway --> client: Confirm update
+
+== Child Uses Platform ==
+child -> client: Launch app
+client -> gateway: GET /api/session/init
+gateway -> parental: Check time remaining
+parental -> settings: GET usage today
+settings --> parental: 45 minutes used
+parental --> gateway: 15 minutes remaining
+gateway --> client: Session allowed, 15min remaining
+
+client --> child: Show time indicator
+
+... 10 minutes later ...
+
+client -> gateway: GET /api/session/check
+gateway -> parental: Check time remaining
+parental --> gateway: 5 minutes remaining
+gateway --> client: Warning: 5 minutes left
+client --> child: "5 minutes left to play!"
+
+... 5 minutes later ...
+
+client -> gateway: GET /api/session/check
+gateway -> parental: Check time remaining
+parental --> gateway: Time expired
+gateway --> client: Session ended
+client --> child: "Time to play outside! See you tomorrow!"
+client -> client: Disable AI features
+
+@enduml
+----
+
+== Emergency Detection Flow
+
+Shows how the system handles potential harm/danger mentions.
+
+[plantuml, format=png]
+----
+@startuml
+title Emergency Detection Flow
+
+actor "Child" as child
+participant "Chat Interface" as chat
+participant "Input Filter" as input
+participant "Emergency Detector" as emergency
+participant "AI Orchestrator" as ai
+participant "Logger" as logger
+
+child -> chat: "I feel really sad and don't want to be here anymore"
+chat -> input: Filter message
+
+input -> emergency: Check for emergency indicators
+emergency -> emergency: Pattern matching
+emergency -> emergency: Sentiment analysis
+note right: Detected: potential emotional distress
+
+emergency --> input: Emergency flag = true
+emergency -> logger: Log event (no PII)
+note right: Log: emergency_type=emotional_distress\ntimestamp=...\nsession_id=...
+
+input --> ai: Message + emergency flag
+ai -> ai: Load emergency response template
+ai --> chat: "I hear that you're feeling sad. It's okay to have those feelings. Please talk to a grown-up you trust - like your mom, dad, teacher, or another adult who cares about you. They can help you feel better. 💙"
+
+chat --> child: Display supportive message
+
+note over chat: Session continues normally\nwith heightened monitoring
+
+@enduml
+----
+
+== Session State Machine
+
+[plantuml, format=png]
+----
+@startuml
+title AI Session State Machine
+
+[*] --> Idle : Session created
+
+Idle --> Listening : User starts speaking/typing
+Idle --> Expired : TTL exceeded
+Idle --> ParentLocked : Time limit reached
+
+Listening --> Processing : Input received
+Listening --> Idle : Timeout (no input)
+
+Processing --> InputRejected : Safety filter failed
+Processing --> AIGenerating : Input accepted
+
+InputRejected --> Idle : Show safe message
+
+AIGenerating --> OutputFiltering : Response received
+AIGenerating --> AIError : LLM error
+
+AIError --> AIGenerating : Retry (max 3)
+AIError --> Idle : Fallback response
+
+OutputFiltering --> Speaking : Output safe
+OutputFiltering --> Idle : Fallback response
+
+Speaking --> Idle : Response delivered
+
+Expired --> [*] : Session destroyed
+ParentLocked --> [*] : Features disabled
+
+@enduml
+----
+
+== Rive Animation State Machine
+
+The mobile app characters use state machines for expressive animations:
+
+[cols="2,3,4", options="header"]
+|===
+|State |Trigger |Animation
+
+|Idle
+|Default state
+|Subtle breathing animation, occasional blinks
+
+|Listening
+|User starts speaking
+|Character leans forward, ears perk up, eyes widen
+
+|Thinking
+|Waiting for AI response
+|Character looks up, thought bubble appears, subtle movement
+
+|Speaking
+|Audio playback starts
+|Lip-sync driven by audio amplitude, expressive gestures
+
+|Happy
+|Positive sentiment detected
+|Bouncy animation, smile, sparkle effects
+
+|Sad
+|Sad sentiment detected
+|Droopy posture, concerned expression
+
+|Surprised
+|Unexpected input
+|Wide eyes, jump animation
+
+|Sleepy
+|Bedtime mode active
+|Half-closed eyes, yawning, slow movements
+|===
+
+== Content Delivery Flow
+
+[plantuml, format=png]
+----
+@startuml
+title Content Delivery Flow
+
+actor "User" as user
+participant "Website" as web
+participant "CDN" as cdn
+participant "Content Service" as content
+participant "CMS Proxy" as proxy
+participant "Content Cache" as cache
+database "Headless CMS" as cms
+
+user -> web: Request page
+web -> cdn: GET /content/homepage
+
+alt CDN Cache Hit
+    cdn --> web: Cached content
+    web --> user: Render page
+else CDN Cache Miss
+    cdn -> content: GET /api/content/homepage
+    content -> proxy: Fetch content
+    proxy -> cache: Check cache
+    
+    alt Cache Hit
+        cache --> proxy: Cached content
+    else Cache Miss
+        proxy -> cms: GraphQL query
+        cms --> proxy: Content data
+        proxy -> cache: Store (TTL)
+    end
+    
+    proxy -> proxy: Resolve locale (IT/FR/EN)
+    proxy --> content: Localized content
+    content --> cdn: Content + cache headers
+    cdn -> cdn: Store in edge cache
+    cdn --> web: Content
+    web --> user: Render page
+end
+
+@enduml
+----

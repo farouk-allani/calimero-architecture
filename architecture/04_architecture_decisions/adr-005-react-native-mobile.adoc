@@ -1,0 +1,55 @@
+= ADR 005: React Native for Mobile App Development
+
+*Status*: Accepted
+
+*Date*: December 2025
+
+*Context*:
+The Calimero Kids Mobile App must be available on both iOS and Android with:
+
+* Voice AI interactions with low latency
+* Rive animations with lip-sync
+* Offline capabilities
+* Native performance feel
+* Fast development within 8-week timeline
+
+Options considered:
+
+1. **Native development (Swift + Kotlin)** - Best performance, highest cost
+2. **React Native** - Cross-platform, JavaScript/TypeScript
+3. **Flutter** - Cross-platform, Dart language
+4. **Progressive Web App (PWA)** - Web-based, limited native features
+
+*Decision:*
+We will use **React Native** with TypeScript for the mobile app development.
+
+Rationale:
+* Single codebase for iOS and Android
+* Team expertise in TypeScript (shared with web)
+* Excellent Rive animation support
+* Strong audio APIs for voice features
+* Large ecosystem and community
+* Code sharing potential with web apps
+* Faster development than native
+
+*Consequences*:
+
+Positive:
+* Single codebase reduces development time by ~40%
+* TypeScript consistency across all platforms
+* Hot reloading speeds development
+* Large community and library ecosystem
+* Rive integration well-supported
+* Native modules available for audio/voice
+
+Negative:
+* Slightly lower performance than pure native
+* Some platform-specific code still needed
+* Dependency on React Native release cycle
+* Bundle size larger than native
+
+Mitigation:
+* Use Hermes engine for better performance
+* Native modules for performance-critical features
+* Thorough testing on both platforms
+* Performance profiling and optimization

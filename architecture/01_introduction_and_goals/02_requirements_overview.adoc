@@ -1,0 +1,60 @@
+// tag::architect[]
+= Requirements Overview
+
+////
+[NOTE]
+====
+This section outlines high-level technical requirements. Each entry represents a key capability of the system. Update this section as new high-level requirements emerge or existing ones change significantly.
+====
+////
+
+== Functional Requirements
+
+[cols="1,8", id=functional-requirements, options="header"]
+|===
+|ID | Requirement
+
+|[[RE1]]R1 | The system shall provide a COPPA-compliant kids website (kids.calimero.com) with zero data collection
+|[[RE2]]R2 | The system shall provide an adult website (calimero.com) with e-commerce capabilities and user authentication
+|[[RE3]]R3 | The system shall deliver a kids-only mobile app with voice AI companions for iOS and Android
+|[[RE4]]R4 | All AI interactions shall be routed through a centralized NestJS backend with safety filtering
+|[[RE5]]R5 | The system shall support multi-language content (Italian, French, English)
+|[[RE6]]R6 | The kids platform shall feature 5 AI character companions (Calimero, Priscilla, Valeriano, Pierrot, Rosita)
+|[[RE7]]R7 | The system shall provide parental controls with PIN verification, time limits, and feature toggles
+|[[RE8]]R8 | AI conversations shall be ephemeral with no persistent storage (in-memory sessions only)
+|[[RE9]]R9 | The mobile app shall feature Rive animations with lip-sync driven by audio amplitude
+|[[RE10]]R10 | The adult site shall include AI character generator and meme maker functionality
+|===
+
+== Technical Requirements
+
+[cols="1,8", id=technical-requirements, options="header"]
+|===
+|ID | Requirement
+
+|[[TR1]]TR1 | Frontend web applications shall be built using Next.js 14 (App Router) with TypeScript
+|[[TR2]]TR2 | Mobile application shall be built using React Native with TypeScript
+|[[TR3]]TR3 | Backend services shall be implemented using NestJS (TypeScript)
+|[[TR4]]TR4 | Speech-to-Text shall be implemented using Whisper API or native device capabilities
+|[[TR5]]TR5 | Text-to-Speech shall be implemented using ElevenLabs with custom trained voices
+|[[TR6]]TR6 | LLM integration shall use external API (Claude/Together AI) with provider abstraction layer
+|[[TR7]]TR7 | Web hosting shall use Vercel for automatic subdomain routing
+|[[TR8]]TR8 | Backend shall be deployed on dedicated server infrastructure
+|[[TR9]]TR9 | Content management shall use headless CMS (Sanity or Contentful)
+|[[TR10]]TR10 | Kids site analytics shall use cookieless solution (Plausible) for COPPA compliance
+|===
+
+== Integration Requirements
+
+[cols="1,8", id=integration-requirements, options="header"]
+|===
+|ID | Requirement
+
+|[[IR1]]IR1 | E-commerce integration with Shopify Storefront API or Medusa.js
+|[[IR2]]IR2 | Authentication integration with NextAuth.js for social logins (adult site only)
+|[[IR3]]IR3 | Analytics integration with Google Analytics 4 and Meta Pixel (adult site only)
+|[[IR4]]IR4 | Video streaming integration with Mux including parental controls
+|[[IR5]]IR5 | CDN integration with Cloudflare for edge caching and DDoS protection
+|===
+
+// end::architect[]

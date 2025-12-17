@@ -1,0 +1,133 @@
+= Technical Debt
+
+////
+[NOTE]
+Known shortcuts or deficiencies that exist in the current implementation. These items are acknowledged trade-offs made to meet the 8-week MVP timeline.
+////
+
+The following technical debt items represent known deficiencies in the MVP implementation. They are acknowledged and planned for future resolution:
+
+== MVP Technical Debt
+
+[cols="1,1,4,4", id=technical-debt, options="header"]
+|===
+|ID |Severity |Description |Remediation Plan
+
+|[[TD1]]TD1
+|High
+|Limited automated test coverage for AI safety filters due to time constraints
+|Post-MVP sprint dedicated to increasing safety filter test coverage to 95%+
+
+|[[TD2]]TD2
+|High
+|No persistent user preferences or personalization (kids platform)
+|By design for COPPA compliance, but may add opt-in parent-controlled preferences in future
+
+|[[TD3]]TD3
+|Medium
+|Single backend instance (no horizontal scaling configured)
+|Implement Kubernetes deployment with auto-scaling post-MVP
+
+|[[TD4]]TD4
+|Medium
+|Voice AI only supports 3 languages (IT, FR, EN) at launch
+|Add Japanese, German, Spanish in Phase 2 (per roadmap)
+
+|[[TD5]]TD5
+|Medium
+|Basic parental activity reports (aggregate only)
+|Enhanced reporting dashboard with more granular (but privacy-safe) insights
+
+|[[TD6]]TD6
+|Medium
+|E-commerce limited to basic checkout flow
+|Advanced features (subscriptions, gift cards, loyalty) deferred to post-MVP
+
+|[[TD7]]TD7
+|Low
+|Minimal documentation for internal APIs
+|Generate OpenAPI specs and documentation post-MVP
+
+|[[TD8]]TD8
+|Low
+|Limited visual regression testing coverage
+|Implement Percy/Chromatic for comprehensive visual testing
+
+|[[TD9]]TD9
+|Low
+|Manual deployment for mobile app updates
+|Implement CodePush for OTA updates (non-native changes)
+|===
+
+== Architecture Debt
+
+[cols="1,1,4,4", id=architecture-debt, options="header"]
+|===
+|ID |Severity |Description |Remediation Plan
+
+|[[AD1]]AD1
+|Medium
+|Monolithic NestJS backend (all modules in single deployment)
+|Evaluate microservices split if scaling becomes an issue
+
+|[[AD2]]AD2
+|Medium
+|No message queue for async operations
+|Add RabbitMQ/Redis Streams for better decoupling and reliability
+
+|[[AD3]]AD3
+|Low
+|CMS content not fully optimized for global CDN distribution
+|Implement edge caching strategy with ISR optimization
+
+|[[AD4]]AD4
+|Low
+|No feature flag system for gradual rollouts
+|Implement LaunchDarkly or similar for controlled feature releases
+|===
+
+== Deferred Features (Not Technical Debt)
+
+The following items are explicitly out of scope for MVP and not considered technical debt:
+
+* Self-hosted AI models
+* Advanced analytics dashboard
+* Push notifications
+* Additional languages beyond IT/FR/EN
+* Persistent user profiles (kids)
+* AI personalization based on history
+* Offline mode improvements
+
+== Debt Payment Schedule
+
+[cols="1,2,2,2", options="header"]
+|===
+|Priority |Items |Target Timeline |Effort Estimate
+
+|P1 - Critical
+|TD1 (Safety test coverage)
+|MVP + 2 weeks
+|1 sprint
+
+|P2 - High
+|TD3 (Scaling), AD1 (Microservices evaluation)
+|MVP + 1 month
+|2 sprints
+
+|P3 - Medium
+|TD4-TD6, AD2-AD3
+|MVP + 2 months
+|3 sprints
+
+|P4 - Low
+|TD7-TD9, AD4
+|MVP + 3 months
+|2 sprints
+|===
+
+== Debt Tracking
+
+* Technical debt items are tracked in the project backlog with `tech-debt` label
+* Reviewed in bi-weekly architecture review meetings
+* Prioritized against feature work based on impact and risk
+* New debt must be documented before acceptance

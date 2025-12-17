@@ -1,0 +1,163 @@
+= Performance Optimization
+
+== Overview
+The Calimero Platform is optimized for fast, responsive user experiences across all touchpoints. Special attention is given to voice AI latency and mobile app performance to ensure engaging interactions for children.
+
+== Performance Targets
+
+[cols="2,2,2", options="header"]
+|===
+|Metric |Target |Measurement
+
+|Page Load Time (LCP)
+|<2.5 seconds
+|Core Web Vitals
+
+|Time to Interactive (TTI)
+|<3.5 seconds
+|Lighthouse
+
+|First Input Delay (FID)
+|<100ms
+|Core Web Vitals
+
+|Cumulative Layout Shift (CLS)
+|<0.1
+|Core Web Vitals
+
+|API Response Time (p95)
+|<500ms
+|Application metrics
+
+|Voice AI Round Trip
+|<2 seconds
+|End-to-end measurement
+
+|Text AI Response
+|<1 second
+|Application metrics
+|===
+
+== Caching Strategy
+
+=== CDN Caching (Cloudflare)
+* Static assets cached at edge (1 year TTL)
+* HTML pages with appropriate cache-control headers
+* Image optimization with WebP conversion
+* Automatic minification (JS, CSS, HTML)
+
+=== Application Caching (Redis)
+* Session memory with TTL-based expiration
+* CMS content cache (5-minute TTL)
+* Rate limiting counters
+* No persistent conversation storage
+
+=== Next.js Caching
+* Static Site Generation (SSG) for stable content
+* Incremental Static Regeneration (ISR) for dynamic content
+* On-demand revalidation for content updates
+
+== AI Performance Optimization
+
+=== Voice Pipeline Optimization
+
+.Voice AI Latency Budget Breakdown
+[cols="2,1,3", options="header"]
+|===
+|Component |Target Latency |Notes
+
+|Speech-to-Text (Whisper)
+|400ms
+|Using whisper.cpp for optimized inference
+
+|AI Processing (LLM)
+|800ms
+|Streaming responses, prompt caching
+
+|Text-to-Speech (ElevenLabs)
+|500ms
+|Pre-loaded voice models, streaming audio
+
+|Network Overhead
+|300ms
+|CDN edge caching, connection pooling
+
+|*Total Latency Budget*
+|*2000ms*
+|*End-to-end voice interaction target*
+|===
+
+* Audio streaming (not waiting for complete utterance)
+* Parallel processing where possible
+* Response streaming from LLM
+* Pre-loaded character voice models
+
+=== Text Chat Optimization
+* LLM response streaming
+* Prompt caching for character personas
+* Session context limiting (last N exchanges)
+* Async safety filtering
+
+== Frontend Performance
+
+=== Kids Website
+* SSG for all main pages
+* Lazy loading for images and videos
+* Preloading critical assets
+* Minimal JavaScript bundle (no analytics libraries)
+* Rive animations loaded on-demand
+
+=== Adult Website
+* ISR for product pages
+* Image lazy loading with blur placeholders
+* Code splitting by route
+* Shopify Storefront API with GraphQL (minimal data)
+
+=== Mobile App
+* Native compilation via React Native
+* Rive animations pre-compiled
+* Offline-capable with local caching
+* Background audio processing
+* Optimized bundle size (<50MB)
+
+== Load Handling
+
+=== Expected Load Profile
+[cols="2,2,2", options="header"]
+|===
+|Time Period |Expected Concurrent Users |Peak Factor
+
+|Morning (6-9 AM)
+|500
+|1x
+
+|After School (3-6 PM)
+|2000
+|4x (peak)
+
+|Evening (6-9 PM)
+|1500
+|3x
+
+|Bedtime (7-9 PM)
+|1000
+|2x
+
+|Night (9 PM - 6 AM)
+|100
+|0.2x
+|===
+
+=== Scaling Strategy
+* Vercel auto-scaling for frontends
+* PM2 cluster mode for backend (utilize all CPU cores)
+* Redis for session distribution
+* LLM provider rate limit management
+
+== Network Optimization
+
+* HTTP/2 enabled
+* Brotli compression
+* DNS prefetching for external APIs
+* Connection keep-alive
+* Geographic distribution (Vercel regions: FRA, IAD, SFO)

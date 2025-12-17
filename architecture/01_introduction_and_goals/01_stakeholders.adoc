@@ -1,0 +1,40 @@
+= Stakeholders
+
+[cols="1,2,3", id=stakeholders, options="header"]
+|===
+|Role |Contact |Expectations
+
+|Brand Owner / Executive Sponsor |Calimero IP Holder |Brand integrity, safe content for children, commercial success
+|Chief Technology Officer |Dar Blockchain CTO |Technical excellence, scalable architecture, security compliance
+|Product Owner |Product Lead |Feature completeness, user satisfaction, COPPA compliance
+|Project Manager |Dar Blockchain PM |On-time delivery within 8-week timeline, budget adherence
+|Tech Lead |Development Lead |Code quality, technical implementation, team coordination
+|Solutions Architect |Architecture Team |System design, architectural decisions, integration patterns
+|UX/UI Designer |Design Team |User experience quality, child-friendly interface, brand consistency
+|Legal/Compliance Officer |Legal Team |COPPA compliance, GDPR adherence, privacy protection
+|QA Lead |Testing Team |Quality assurance, testing coverage, bug-free releases
+|DevOps Engineer |Infrastructure Team |Deployment automation, monitoring, scalability
+|===
+
+== Stakeholder Concerns Matrix
+
+[cols="2,4", options="header"]
+|===
+|Stakeholder Group |Primary Concerns
+
+|Business Stakeholders
+|ROI, brand protection, market differentiation, timeline adherence
+
+|Technical Stakeholders
+|Architecture scalability, code maintainability, security, performance
+
+|Compliance Stakeholders
+|COPPA compliance, data privacy, content moderation, legal liability
+
+|End Users (Children)
+|Fun experience, safe interactions, engaging content, voice AI companions
+
+|End Users (Adults/Parents)
+|Trust, safety controls, e-commerce functionality, parental dashboard
+
+|===

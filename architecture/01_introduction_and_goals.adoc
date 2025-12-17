@@ -1,0 +1,31 @@
+= Introduction and Goals
+
+////
+[NOTE]
+====
+This section provides a high-level overview of the project goals and key requirements. Keep it concise and business-focused.
+====
+////
+
+// tag::manager[]
+== Executive Summary
+The Calimero Digital Platform delivers a comprehensive digital ecosystem for the iconic Calimero brand, consisting of three core products targeting distinct audiences with varying requirements:
+
+* **kids.calimero.com** — A COPPA-compliant children's website featuring safe AI-powered chat interactions, games, videos, and educational content
+* **calimero.com** — The main adult platform with e-commerce capabilities, culture content, AI character generation, and nostalgic features
+* **Calimero Kids Mobile App** — A React Native application (iOS & Android) with voice-enabled AI companions featuring Rive animations
+
+The platform is built on a modern tech stack with a centralized NestJS backend that orchestrates all AI interactions through multi-layer safety filtering, content moderation, and session management. The architecture prioritizes child safety, COPPA compliance, and scalable performance while delivering an engaging user experience across all touchpoints.
+
+=== Key Business Objectives
+* Establish Calimero as a leading digital brand for children's entertainment and merchandise
+* Provide safe, engaging AI-powered interactions for children ages 4-12
+* Enable e-commerce and cultural content delivery for adult audiences
+* Achieve MVP launch within 8-week timeline
+* Support multi-language audiences (Italian, French, English)
+
+=== Target Timeline
+* **8 Weeks (2 Months)** — MVP Launch Ready
+* **Version 1.0** — December 2025
+// end::manager[]
+

@@ -1,0 +1,69 @@
+= ADR 006: Voice AI Technology Stack Selection
+
+*Status*: Accepted
+
+*Date*: December 2025
+
+*Context*:
+The mobile app requires voice AI interactions with character companions. The voice pipeline must:
+
+* Convert child speech to text accurately (multiple languages)
+* Generate character-specific voice responses
+* Achieve <2 second total latency
+* Support custom voice training for 5 characters
+* Work reliably across varying audio quality
+
+Options considered:
+
+**Speech-to-Text (STT):**
+
+1. OpenAI Whisper API - High accuracy, good multilingual
+2. Google Cloud Speech-to-Text - Fast, good quality
+3. AWS Transcribe - Integrated with AWS ecosystem
+4. AssemblyAI - Good accuracy, streaming support
+
+**Text-to-Speech (TTS):**
+
+1. ElevenLabs - Best voice cloning, expressive
+2. Google Cloud TTS - Good quality, many voices
+3. Amazon Polly - Cost-effective, reliable
+4. Azure Neural TTS - Good quality, multilingual
+
+*Decision:*
+We will use:
+
+* **STT**: OpenAI Whisper API (with native device fallback)
+* **TTS**: ElevenLabs with custom-trained voices per character
+
+Voice characteristics for 5 characters:
+|===
+|Character |Voice Profile |Language Accent
+
+|Calimero |Warm, empathetic, slight crack |Italian-influenced
+|Priscilla |Soft, melodic, nurturing |Gentle, neutral
+|Valeriano |Energetic, excited, adventurous |Bold, expressive
+|Pierrot |Bouncy, playful, comedic |Light, fun
+|Rosita |Clear, articulate, curious |Precise, educational
+|===
+
+*Consequences*:
+
+Positive:
+* Whisper's excellent multilingual support (IT, FR, EN)
+* ElevenLabs produces natural, expressive voices
+* Custom voice cloning creates unique character identities
+* Both services have good latency characteristics
+* Strong documentation and SDK support
+
+Negative:
+* ElevenLabs cost scales with usage
+* Dependency on external services
+* Voice training requires quality samples
+* Latency varies by network conditions
+
+Mitigation:
+* Text fallback when voice fails
+* Audio streaming (not waiting for complete audio)
+* Pre-loaded voice models on ElevenLabs
+* Cost monitoring and optimization
+* Native device STT as fallback option

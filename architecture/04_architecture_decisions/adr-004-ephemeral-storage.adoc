@@ -1,0 +1,57 @@
+= ADR 004: Ephemeral Conversation Storage
+
+*Status*: Accepted
+
+*Date*: December 2025
+
+*Context*:
+AI companion conversations require context management for natural multi-turn dialogue. However, the platform must also ensure:
+
+* COPPA compliance (no persistent data on kids)
+* User privacy protection
+* Simplified data management
+* Reduced liability from stored conversations
+
+Options considered:
+
+1. **Persistent database storage** - Store all conversations in database
+2. **User-controlled storage** - Let users opt-in to save conversations
+3. **Ephemeral in-memory storage** - Session-only, auto-expiring
+4. **No context at all** - Every message is independent
+
+*Decision:*
+We will implement **ephemeral in-memory storage** using Redis with TTL-based expiration:
+
+* Conversation context stored in Redis
+* Session TTL: 30 minutes of inactivity
+* No persistence to disk
+* Automatic deletion on session end
+* No conversation recovery possible
+
+Rationale:
+* Maintains natural conversation flow within a session
+* Complete COPPA compliance (no persistent child data)
+* Simplified data handling and compliance
+* Reduced security and privacy risks
+* No data retention requirements to manage
+
+*Consequences*:
+
+Positive:
+* Full COPPA compliance by design
+* No conversation data to breach
+* Simplified privacy policy
+* No data retention management needed
+* Users start fresh each session
+
+Negative:
+* Cannot personalize over time
+* No conversation history for users
+* Lost context on session timeout
+* Cannot analyze conversation quality
+
+Mitigation:
+* Friendly session timeout warnings
+* Quick re-engagement after timeout
+* Character personas provide consistency
+* Aggregate metrics (not content) for quality analysis

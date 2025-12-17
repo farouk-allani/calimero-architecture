@@ -1,0 +1,379 @@
+= Deployment View
+
+[NOTE]
+====
+This document describes the deployment architecture, infrastructure setup, CI/CD pipeline, and environment management for the Calimero Digital Platform.
+====
+
+== Infrastructure Overview
+
+[plantuml, format=png]
+----
+@startuml
+title Deployment Architecture
+
+node "Cloudflare" {
+    [CDN Edge] as cdn
+    [DDoS Protection] as ddos
+    [SSL Termination] as ssl
+}
+
+cloud "Vercel" {
+    node "Kids Website" as kidsVercel {
+        [Next.js SSG] as kidsSsg
+        [Serverless Functions] as kidsFunc
+    }
+    node "Adult Website" as adultVercel {
+        [Next.js ISR] as adultIsr
+        [Serverless Functions] as adultFunc
+    }
+}
+
+cloud "Dedicated Server" {
+    node "Backend Infrastructure" as backend {
+        [NestJS Application] as nestjs
+        [Redis Cache] as redis
+        [PM2 Process Manager] as pm2
+    }
+}
+
+cloud "External Services" {
+    [Together AI / Claude] as llm
+    [ElevenLabs] as tts
+    [Whisper API] as stt
+    [Sanity CMS] as cms
+    [Mux Video] as video
+}
+
+cloud "App Stores" {
+    [Apple App Store] as ios
+    [Google Play Store] as android
+}
+
+[Mobile App Users] as mobileUsers
+
+cdn --> kidsVercel : HTTPS
+cdn --> adultVercel : HTTPS
+kidsVercel --> backend : HTTPS/REST
+adultVercel --> backend : HTTPS/REST
+
+mobileUsers --> ios : Download
+mobileUsers --> android : Download
+mobileUsers --> backend : HTTPS/REST
+
+backend --> llm : HTTPS
+backend --> tts : HTTPS
+backend --> stt : HTTPS
+backend --> cms : HTTPS
+kidsVercel --> video : HTTPS
+adultVercel --> video : HTTPS
+
+@enduml
+----
+
+== Environment Configuration
+
+[cols="1,3,3,3", options="header"]
+|===
+|Environment |Purpose |URL |Deployment Trigger
+
+|Development
+|Local development and testing
+|localhost:3000/3001/4000
+|Manual
+
+|Staging
+|Integration testing, QA
+|staging.calimero.com, staging-kids.calimero.com
+|Push to `develop` branch
+
+|Production
+|Live user-facing environment
+|calimero.com, kids.calimero.com
+|Push to `main` branch (after approval)
+|===
+
+== Branching Strategy
+
+=== Overview
+The branching strategy ensures code quality and enables rapid iteration while maintaining production stability.
+
+=== Branch Types
+
+* `main` - Production-ready code, protected branch
+* `develop` - Integration branch for features
+* `feature/*` - Feature development branches
+* `release/*` - Release preparation branches
+* `hotfix/*` - Emergency production fixes
+
+=== Branch Naming Convention
+
+* `feature/voice-ai-integration`
+* `feature/parental-controls`
+* `feature/rive-animation-states`
+* `release/1.0.0`
+* `hotfix/1.0.1-safety-filter`
+
+=== Branch Workflow
+
+[plantuml, format=png]
+----
+@startuml
+title Git Branching Strategy
+
+main -down-> release : Create release branch
+release -down-> develop : Merge to develop
+develop -down-> feature : Branch for features
+feature -up-> develop : PR + Review
+release -up-> main : Release merge
+main -down-> hotfix : Emergency fixes
+hotfix -up-> main : Hotfix merge
+hotfix -right-> develop : Sync hotfix
+
+@enduml
+----
+
+== CI/CD Pipeline
+
+=== Pipeline Stages
+
+[plantuml, format=png]
+----
+@startuml
+title CI/CD Pipeline
+
+|Developer|
+start
+:Push to branch;
+
+|CI Server|
+:Trigger pipeline;
+:Install dependencies;
+
+fork
+    :Run linting (ESLint);
+fork again
+    :Run type checking (TypeScript);
+fork again
+    :Run unit tests (Jest);
+end fork
+
+if (All checks pass?) then (yes)
+    :Build application;
+    
+    if (Branch = develop?) then (yes)
+        :Deploy to Staging;
+        :Run E2E tests;
+        :Run load tests (1000 users);
+        
+        if (Staging tests pass?) then (yes)
+            :Notify QA team;
+        else (no)
+            :Notify developers;
+            stop
+        endif
+        
+    elseif (Branch = main?) then (yes)
+        :Require approval (2 reviewers);
+        :Run COPPA compliance check;
+        :Deploy to Production;
+        :Run smoke tests;
+        :Monitor error rates;
+        
+        if (Error rate > 1%?) then (yes)
+            :Automatic rollback;
+            :Alert on-call engineer;
+        else (no)
+            :Deployment complete;
+        endif
+    endif
+else (no)
+    :Notify developer;
+    stop
+endif
+
+stop
+
+@enduml
+----
+
+=== Quality Gates
+
+[cols="1,3,2", options="header"]
+|===
+|Gate |Criteria |Environment
+
+|Lint Check
+|Zero ESLint errors, TypeScript strict mode
+|All branches
+
+|Unit Tests
+|100% pass rate, >80% coverage for critical modules
+|All branches
+
+|E2E Tests
+|All critical user journeys pass
+|Staging only
+
+|Load Tests
+|<1s response time at 1000 concurrent users
+|Staging only
+
+|COPPA Compliance
+|Automated scan passes, no tracking detected on kids site
+|Pre-production
+
+|Security Scan
+|No critical/high vulnerabilities
+|All branches
+|===
+
+== Deployment Configuration
+
+=== Kids Website (Vercel)
+
+```yaml
+# vercel.json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "regions": ["fra1", "iad1", "sfo1"],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin" }
+      ]
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api-url",
+    "NEXT_PUBLIC_PLAUSIBLE_DOMAIN": "kids.calimero.com"
+  }
+}
+```
+
+=== Adult Website (Vercel)
+
+```yaml
+# vercel.json
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "regions": ["fra1", "iad1", "sfo1"],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api-url",
+    "NEXTAUTH_URL": "@auth-url",
+    "SHOPIFY_STOREFRONT_TOKEN": "@shopify-token"
+  }
+}
+```
+
+=== Backend (Dedicated Server)
+
+```yaml
+# ecosystem.config.js (PM2)
+module.exports = {
+  apps: [{
+    name: 'calimero-backend',
+    script: 'dist/main.js',
+    instances: 'max',
+    exec_mode: 'cluster',
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: 4000,
+      REDIS_URL: 'redis://localhost:6379',
+      LLM_API_KEY: '***',
+      ELEVENLABS_API_KEY: '***',
+      WHISPER_API_KEY: '***'
+    }
+  }]
+};
+```
+
+=== Mobile App (React Native)
+
+[cols="1,3", options="header"]
+|===
+|Platform |Build & Distribution
+
+|iOS
+|Xcode Cloud → TestFlight (beta) → App Store
+
+|Android
+|GitHub Actions → Internal Testing → Google Play Store
+|===
+
+== Monitoring & Observability
+
+=== Metrics Collection
+
+* **Application Metrics**: Response times, error rates, AI inference latency
+* **Infrastructure Metrics**: CPU, memory, disk usage
+* **Business Metrics**: Active users, chat sessions, conversion rates (adult site)
+
+=== Alerting Rules
+
+[cols="2,2,2,2", options="header"]
+|===
+|Metric |Warning |Critical |Action
+
+|Error Rate
+|>0.5%
+|>1%
+|Page on-call, investigate
+
+|Response Time (p95)
+|>500ms
+|>1000ms
+|Scale up, investigate
+
+|AI Latency
+|>2s
+|>5s
+|Check LLM provider status
+
+|Safety Filter Triggers
+|>10/hour
+|>50/hour
+|Review patterns, adjust filters
+|===
+
+=== Log Management
+
+* **Log Aggregation**: Centralized logging (no PII)
+* **Retention**: 30 days standard, 90 days for security logs
+* **Access**: Role-based access to logs
+* **Audit Trail**: All parental control changes logged
+
+== Disaster Recovery
+
+=== Backup Strategy
+
+[cols="1,2,2", options="header"]
+|===
+|Component |Backup Frequency |Retention
+
+|CMS Content
+|Daily (automatic)
+|30 days
+
+|Configuration
+|On every change
+|Indefinite (git)
+
+|Redis Cache
+|Not backed up (ephemeral)
+|N/A
+|===
+
+=== Recovery Procedures
+
+* **Frontend Issues**: Automatic rollback via Vercel
+* **Backend Issues**: PM2 automatic restart + rollback scripts
+* **LLM Provider Outage**: Automatic failover to backup provider
+* **CDN Issues**: Cloudflare automatic failover between edges

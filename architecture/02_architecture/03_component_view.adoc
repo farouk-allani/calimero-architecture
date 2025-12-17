@@ -1,0 +1,344 @@
+= Component Diagram
+
+== Overview
+
+This document provides a component-level view (C3) of the Calimero Platform, detailing the internal structure of the main containers and their interactions with external systems.
+
+== [[components]] Component Diagram - Frontend Applications
+
+The Calimero platform consists of two web applications and one mobile application, each serving distinct user segments with appropriate features and compliance requirements.
+
+[plantuml, format=png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram - Frontend Applications
+
+Container_Ext(cdn, "Cloudflare CDN", "Edge caching and DDoS protection")
+
+System_Boundary(frontends, "Frontend Applications") {
+    Container_Boundary(kids_web, "Kids Website (kids.calimero.com)") {
+        Component(kids_home, "Home Page", "SSG", "Animated landing, featured episode, game of the day")
+        Component(kids_watch, "Watch Section", "SSG + ISR", "Episodes, clips, AI shorts, mood recommendations")
+        Component(kids_play, "Play Section", "CSR", "Coloring, memory match, puzzles, dress-up, quiz")
+        Component(kids_friends, "Friends Section", "SSG", "Character profiles, animations, fun facts")
+        Component(kids_talk, "Talk Section", "CSR", "AI companion text chat (safe, moderated)")
+        Component(kids_parents, "Parents Dashboard", "CSR + PIN", "Time controls, feature toggles, activity summary")
+    }
+    
+    Container_Boundary(adult_web, "Adult Website (calimero.com)") {
+        Component(adult_home, "Home Page", "SSG + ISR", "Hero banner, drops, products, culture")
+        Component(adult_shop, "Shop Section", "ISR", "All merchandise, filters, size guides")
+        Component(adult_drops, "Drops Section", "ISR", "Upcoming releases, countdown, notifications")
+        Component(adult_culture, "Culture Section", "ISR", "Memes, social feed, community highlights")
+        Component(adult_nostalgia, "Nostalgia Section", "SSG", "History, classic episodes, memories")
+        Component(adult_create, "Create Section", "CSR", "AI character generator, meme maker")
+        Component(adult_account, "Account Section", "CSR", "Login, orders, wishlist, notifications")
+    }
+    
+    Container_Boundary(mobile_app, "Kids Mobile App") {
+        Component(mobile_talk, "Talk Feature", "Voice AI", "Voice conversations with 5 characters")
+        Component(mobile_stories, "Stories Feature", "Interactive", "AI-generated bedtime stories")
+        Component(mobile_play, "Play Feature", "Games", "Memory, puzzles, coloring, quiz")
+        Component(mobile_watch, "Watch Feature", "Video", "Episodes, offline download")
+        Component(mobile_learn, "Learn Feature", "Educational", "Homework help, fun facts, math")
+        Component(mobile_parents, "Parental Controls", "PIN-protected", "Time limits, feature toggles")
+    }
+}
+
+Container_Ext(backend, "Calimero Backend", "NestJS API Server")
+
+Rel(cdn, kids_web, "Routes traffic to")
+Rel(cdn, adult_web, "Routes traffic to")
+
+Rel(kids_web, backend, "API requests", "HTTPS/REST")
+Rel(adult_web, backend, "API requests", "HTTPS/REST")
+Rel(mobile_app, backend, "API requests", "HTTPS/REST")
+
+@enduml
+----
+
+=== Kids Website Components
+
+==== Home Page
+The animated landing page featuring the day's highlighted content. Uses Static Site Generation for optimal performance and SEO. Includes featured episode preview, game of the day highlight, and quick navigation to main sections.
+
+==== Watch Section
+Video content delivery with ISR for regular content updates. Features full episodes, short clips, AI-generated daily shorts, and mood-based recommendations. Integrates with Mux for video streaming with parental controls.
+
+==== Play Section
+Interactive games section using Client-Side Rendering for dynamic gameplay. Includes:
+* Coloring activities with character templates
+* Memory match games
+* Puzzles with varying difficulty
+* Dress-up games with Calimero characters
+* Quiz games with educational content
+* Story builder for creative expression
+
+==== Friends Section
+Character profiles showcasing the 5 AI companions with Rive animations and voice clips. Provides fun facts and personality traits for each character.
+
+==== Talk Section
+AI companion text chat interface with real-time moderation. Conversations are ephemeral (session-based) with no persistent storage. Time-limited sessions with friendly warnings.
+
+==== Parents Dashboard
+PIN-protected dashboard for parental controls:
+* Daily time limit configuration
+* Feature toggles (chat, downloads, specific characters)
+* Activity summary view (no chat content visible)
+* Sync with mobile app settings
+
+=== Adult Website Components
+
+==== Home Page
+Hero-driven landing with ISR for dynamic content. Features latest drops, featured products, and culture highlights. Implements streetwear aesthetic design.
+
+==== Shop Section
+Full e-commerce experience integrated with Shopify Storefront API:
+* Product catalog with filters (category, size, price)
+* Size guides and fit recommendations
+* Wishlist with restock alerts
+* Quick checkout (Apple Pay, Google Pay, PayPal)
+
+==== Drops Section
+Limited release management with countdown timers and notification signup. ISR updates for real-time inventory status.
+
+==== Culture Section
+Community-driven content including memes, social feed integration, and user-generated content highlights.
+
+==== Nostalgia Section
+Historical content archive with classic episodes, show history, and "remember when" features. Static generation for performance.
+
+==== Create Section
+AI-powered creative tools:
+* Character generator using LLM + image generation
+* Meme maker with Calimero templates
+* Fan art gallery
+
+==== Account Section
+User account management with NextAuth.js:
+* Login/registration with social providers
+* Order history and tracking
+* Wishlist management
+* Drop notification preferences
+
+=== Mobile App Components
+
+==== Talk Feature (Voice AI)
+The core feature enabling voice conversations with AI characters:
+* Tap-to-talk or always-listening mode (parent choice)
+* Real-time character reactions while listening
+* Lip-sync animation driven by audio amplitude
+* Session time limits with friendly warnings
+
+==== Stories Feature
+Interactive bedtime story experience:
+* AI-generated personalized stories
+* Choice-based narrative ("Should Calimero go left or right?")
+* Priscilla narration with soothing voice
+* Sleep timer with gentle fade-out
+
+==== Play Feature
+Mobile-optimized games with voice feedback:
+* Memory match, puzzles, coloring
+* Rosita-hosted quiz games
+* Valeriano-led adventure games
+* Progress badges (local storage only)
+
+==== Watch Feature
+Video content with offline capabilities:
+* Full episodes and clips
+* Offline download (parent permission required)
+* AI-generated daily shorts
+* "Watch with me" mode with character commentary
+
+==== Learn Feature
+Educational content with Rosita:
+* Homework question assistance
+* Fun facts (animals, science, nature)
+* Language learning basics (IT, FR, EN)
+* Math games with voice guidance
+
+==== Parental Controls (Mobile)
+PIN-protected mobile dashboard syncing with web:
+* Daily time limits (30min / 1hr / 2hr / Unlimited)
+* Voice chat toggle
+* Download permissions
+* Bedtime mode (quiet hours, Priscilla-only)
+* Character restrictions
+* Weekly activity summary emails
+
+== Component Diagram - Backend
+
+The Calimero Backend is a NestJS monolith with clearly separated modules following domain-driven design principles.
+
+[plantuml, format=png]
+----
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram - Backend Services
+
+System_Boundary(backend, "Calimero Backend (NestJS)") {
+    Container_Boundary(gateway_layer, "Gateway Layer") {
+        Component(api_gateway, "API Gateway", "NestJS Controller", "Request routing, validation, rate limiting")
+        Component(auth_guard, "Auth Guard", "NestJS Guard", "Authentication for adult site endpoints")
+        Component(cors_handler, "CORS Handler", "Middleware", "Whitelist-based origin validation")
+    }
+    
+    Container_Boundary(ai_layer, "AI Services Layer") {
+        Component(ai_orchestrator, "AI Orchestrator", "NestJS Service", "Character persona injection, session management")
+        Component(llm_adapter, "LLM Adapter", "Provider Pattern", "Abstraction layer for LLM provider swap")
+        Component(input_filter, "Input Safety Filter", "NestJS Interceptor", "User input sanitization and validation")
+        Component(output_filter, "Output Safety Filter", "NestJS Interceptor", "AI response validation and moderation")
+        Component(topic_guard, "Topic Boundary Guard", "NestJS Guard", "Enforces safe conversation topics")
+        Component(emergency_detector, "Emergency Detector", "NestJS Service", "Identifies harm/danger mentions")
+    }
+    
+    Container_Boundary(voice_layer, "Voice Processing Layer") {
+        Component(stt_adapter, "STT Adapter", "NestJS Service", "Whisper API integration for transcription")
+        Component(tts_adapter, "TTS Adapter", "NestJS Service", "ElevenLabs integration with character voices")
+        Component(audio_normalizer, "Audio Normalizer", "NestJS Service", "Audio stream format normalization")
+        Component(voice_streamer, "Voice Streamer", "WebSocket", "Real-time audio streaming")
+    }
+    
+    Container_Boundary(control_layer, "Control Layer") {
+        Component(parental_service, "Parental Service", "NestJS Service", "Time limits, feature toggles, PIN verification")
+        Component(session_manager, "Session Manager", "NestJS Service", "TTL-based ephemeral session management")
+        Component(time_enforcer, "Time Enforcer", "NestJS Guard", "Daily time limit enforcement")
+    }
+    
+    Container_Boundary(content_layer, "Content Layer") {
+        Component(cms_proxy, "CMS Proxy", "NestJS Service", "Headless CMS integration")
+        Component(locale_resolver, "Locale Resolver", "NestJS Service", "Language/region resolution")
+        Component(content_cache, "Content Cache", "NestJS Service", "Response caching layer")
+    }
+    
+    Container_Boundary(observability, "Observability") {
+        Component(structured_logger, "Structured Logger", "NestJS Service", "Logging without PII")
+        Component(error_tracker, "Error Tracker", "NestJS Service", "Exception handling and tracking")
+        Component(metrics_collector, "Metrics Collector", "NestJS Service", "AI cost and performance metrics")
+    }
+}
+
+ContainerDb_Ext(redis, "Redis", "Session cache")
+Container_Ext(llm, "LLM API", "Together AI / Claude")
+Container_Ext(stt, "Whisper API", "Speech-to-Text")
+Container_Ext(tts, "ElevenLabs", "Text-to-Speech")
+Container_Ext(cms, "Headless CMS", "Sanity / Contentful")
+
+Rel(ai_orchestrator, llm_adapter, "Uses")
+Rel(llm_adapter, llm, "Inference requests", "HTTPS")
+Rel(ai_orchestrator, session_manager, "Session data")
+Rel(session_manager, redis, "Read/Write", "Redis Protocol")
+
+Rel(stt_adapter, stt, "Transcription", "HTTPS")
+Rel(tts_adapter, tts, "Synthesis", "HTTPS")
+
+Rel(cms_proxy, cms, "Content fetch", "HTTPS")
+Rel(cms_proxy, content_cache, "Cache operations")
+
+@enduml
+----
+
+=== API Gateway
+Entry point for all client requests. Handles:
+* Request routing to appropriate services
+* Input validation using class-validator
+* Rate limiting (different limits for kids vs adult platforms)
+* Request/response logging (no PII)
+
+=== Auth Guard
+Authentication guard for adult site endpoints:
+* JWT token validation
+* Session verification
+* Role-based access control
+
+=== AI Orchestrator
+Central coordination service for AI interactions:
+* Injects character-specific system prompts
+* Manages conversation context within session TTL
+* Coordinates safety filtering pipeline
+* Handles LLM response streaming
+
+=== LLM Adapter
+Provider abstraction layer enabling:
+* Hot-swappable LLM providers
+* Automatic failover to backup provider
+* Request/response normalization
+* Cost tracking per request
+
+=== Input Safety Filter
+Pre-processing interceptor for user input:
+* Sanitization of potentially harmful content
+* PII detection and removal
+* Length and format validation
+* Profanity filtering
+
+=== Output Safety Filter
+Post-processing interceptor for AI responses:
+* Content moderation validation
+* Response sanitization
+* Format normalization
+* Emergency trigger detection
+
+=== Topic Boundary Guard
+Enforces conversation topic restrictions:
+* Whitelist: show, friendship, hobbies, learning, imagination, feelings
+* Blocks: personal data requests, inappropriate topics, external links
+
+=== Emergency Detector
+Monitors for potential harm/danger indicators:
+* Triggers immediate safe response
+* Logs event for review (no PII)
+* Suggests seeking adult help
+
+=== STT Adapter
+Speech-to-text service integration:
+* Whisper API communication
+* Audio format conversion
+* Multi-language support
+* Error handling with text fallback
+
+=== TTS Adapter
+Text-to-speech service integration:
+* ElevenLabs API communication
+* Character voice selection (5 custom voices)
+* Audio streaming optimization
+* Emotion parameter injection
+
+=== Parental Service
+Parental control management:
+* PIN verification
+* Settings CRUD operations
+* Cross-platform sync (web + mobile)
+* Activity summary generation
+
+=== Session Manager
+Ephemeral session handling:
+* TTL-based session creation
+* Context storage in Redis
+* Automatic session expiration
+* No persistent data storage
+
+=== CMS Proxy
+Content management integration:
+* Multi-tenant CMS queries
+* Platform-specific content filtering
+* Cache invalidation handling
+
+=== Structured Logger
+Logging service ensuring privacy:
+* No PII in logs
+* Structured JSON format
+* Log level management
+* Correlation ID tracking
+
+=== Metrics Collector
+Performance and cost monitoring:
+
+* AI inference cost tracking
+* Response time metrics
+* Error rate monitoring
+* Usage analytics (aggregate only)

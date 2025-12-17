@@ -1,0 +1,41 @@
+services:
+
+  build-html:
+    image: "asciidoctor/docker-asciidoctor"
+    pull_policy: "if_not_present"
+    volumes:
+      - ./:/documents
+    command:
+      - "asciidoctor"
+      - "-r"
+      - "asciidoctor-diagram"
+      - "-a"
+      - "toc2"
+      - "architecture.adoc"
+      - "-o"
+      - "/documents/build-html/index.html"
+
+  build-pdf:
+    image: "asciidoctor/docker-asciidoctor"
+    volumes:
+      - ./:/documents
+    command:
+      - "asciidoctor-pdf"
+      - "-r"
+      - "asciidoctor-diagram"
+      - "architecture.adoc"
+      - "-o"
+      - "/documents/build-pdf/index.pdf"
+
+  publish-confluence:
+    image: "confluencepublisher/confluence-publisher:0.29.0"
+    environment:
+      ROOT_CONFLUENCE_URL: "${ROOT_CONFLUENCE_URL}"
+      USERNAME: "${USERNAME}"
+      PASSWORD: "${PASSWORD}"
+      SPACE_KEY: "${SPACE_KEY}"
+      ANCESTOR_ID: "${ANCESTOR_ID}"
+      PAGE_TITLE_PREFIX: "${PAGE_TITLE_PREFIX}"
+      PAGE_TITLE_SUFFIX: "${PAGE_TITLE_SUFFIX}"
+    volumes:
+      - ./architecture:/var/asciidoc-root-folder

@@ -1,0 +1,59 @@
+// tag::developer[]
+= Quality Goals
+
+////
+[NOTE]
+How will quality be measured in this project, also referred to as Non-Functional requirements
+////
+
+== Primary Quality Attributes
+
+[cols="1,3,8", id=quality-goals, options="header"]
+|===
+|ID |Quality |Description
+
+|[[Q1]]Q1 |Child Safety |Multi-layer AI content moderation ensuring safe interactions. Input/output filtering, topic boundaries, emergency detection protocols. Zero tolerance for inappropriate content.
+
+|[[Q2]]Q2 |COPPA Compliance |Full compliance with Children's Online Privacy Protection Act. No personal data collection on kids platforms. No cookies, no chat persistence, no tracking pixels.
+
+|[[Q3]]Q3 |Performance |System responds within 1 second for 95% of requests. Voice AI interactions achieve low latency with streaming responses. Core Web Vitals optimized (LCP, FID, CLS).
+
+|[[Q4]]Q4 |Security |TLS 1.3 encryption for all communications. Strict CORS policies. Input sanitization before LLM processing. Output validation before delivery. Regular security audits.
+
+|[[Q5]]Q5 |Scalability |Architecture supports 10x growth in user base. Horizontal scaling for backend services. CDN edge caching for global distribution.
+
+|[[Q6]]Q6 |Localization |Multi-language support for Italian, French, and English at launch. URL-based locale routing. CMS-driven content localization.
+
+|[[Q7]]Q7 |Accessibility |WCAG 2.1 AA compliance. Large touch targets (48px+) for kids interfaces. Icon-heavy navigation with minimal text for young users.
+
+|[[Q8]]Q8 |Reliability |99.9% uptime target. Graceful degradation with text fallback for voice features. LLM provider abstraction for failover capability.
+
+|[[Q9]]Q9 |Maintainability |Modular architecture with clear separation of concerns. Comprehensive documentation. CI/CD pipeline with automated testing.
+
+|[[Q10]]Q10 |Privacy |No PII storage on kids platforms. Ephemeral AI conversations. Parent-controlled activity summaries without chat content.
+|===
+
+== Quality Scenarios
+
+[cols="2,6,2", options="header"]
+|===
+|Quality Attribute |Scenario |Priority
+
+|Child Safety
+|When a child mentions potential harm or danger, the system immediately responds with appropriate guidance to seek adult help and logs the event (without PII) for review.
+|Critical
+
+|Performance
+|Under peak load of 1000 concurrent users, voice AI response latency remains under 2 seconds including STT, LLM processing, and TTS.
+|High
+
+|COPPA Compliance
+|Kids platform operates without setting any cookies, collecting any personal information, or storing any conversation history.
+|Critical
+
+|Reliability
+|When the primary LLM provider experiences downtime, the system automatically switches to backup provider with zero user-facing errors.
+|High
+|===
+
+// end::developer[]

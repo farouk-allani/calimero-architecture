@@ -1,0 +1,51 @@
+= ADR 001: LLM Provider Selection for AI Companions
+
+*Status*: Accepted
+
+*Date*: December 2025
+
+*Context*:
+The Calimero Platform requires an LLM (Large Language Model) provider to power AI companion conversations for children. The selection must consider:
+
+* Child safety capabilities and content moderation
+* Response quality and natural conversation flow
+* Latency requirements (<1 second for text, <2 seconds for voice pipeline)
+* Cost efficiency at scale (millions of monthly interactions)
+* Provider reliability and uptime guarantees
+* Data privacy and COPPA compliance
+* Multi-language support (Italian, French, English)
+
+Evaluated options:
+
+1. **OpenAI GPT-4** - Industry leader, excellent quality, higher cost
+2. **Anthropic Claude** - Strong safety focus, good quality, moderate cost
+3. **Together AI** - Cost-effective, good quality, flexible deployment
+4. **Self-hosted open-source** - Full control, high infrastructure cost
+
+*Decision:*
+We will use **Together AI** as the primary LLM provider with **Anthropic Claude** as the backup/failover provider.
+
+Rationale:
+* Together AI offers excellent cost-to-quality ratio for high-volume usage
+* Together AI provides multiple model options for optimization
+* Claude's Constitutional AI approach aligns with child safety requirements
+* Both providers have strong data privacy commitments (no training on user data)
+* Provider abstraction layer allows easy switching if needed
+
+*Consequences*:
+
+Positive:
+* Cost-effective scaling for MVP and beyond
+* Dual-provider strategy ensures high availability
+* Both providers support required languages
+* Strong safety capabilities from both providers
+
+Negative:
+* Need to maintain abstraction layer for provider switching
+* Slightly different response characteristics between providers
+* Additional complexity in failover logic
+
+Mitigation:
+* Implement robust LLM adapter with unified interface
+* Tune prompts for consistency across providers
+* Automated failover with health checks

@@ -1,0 +1,62 @@
+= ADR 003: Centralized AI Backend Architecture
+
+*Status*: Accepted
+
+*Date*: December 2025
+
+*Context*:
+All AI interactions (text chat on web, voice conversations on mobile) require safety filtering, content moderation, and consistent behavior across platforms. The architecture must ensure:
+
+* Consistent safety filtering across all touchpoints
+* Centralized rate limiting and cost control
+* Single point for AI provider management
+* Uniform logging and monitoring (without PII)
+* Session management for conversation context
+
+Options considered:
+
+1. **Direct client-to-LLM** - Clients call LLM APIs directly
+2. **Centralized NestJS backend** - All AI traffic through single backend
+3. **Edge functions** - AI processing at CDN edge
+4. **Microservices** - Separate services per concern
+
+*Decision:*
+We will implement a **centralized NestJS backend** that routes all AI traffic. No client will communicate directly with LLM providers.
+
+Architecture:
+```
+[Clients] → [NestJS Backend] → [LLM/STT/TTS APIs]
+                  ↓
+           [Safety Layer]
+           [Session Manager]
+           [Cost Tracker]
+```
+
+Rationale:
+* Single point for safety filtering (critical for kids platform)
+* Centralized prompt injection for character personas
+* Unified session management
+* Cost tracking and rate limiting in one place
+* API keys never exposed to clients
+* Easy provider switching without client updates
+
+*Consequences*:
+
+Positive:
+* Complete control over AI interactions
+* Consistent safety across all platforms
+* Simplified client implementations
+* Centralized monitoring and alerting
+* Easy A/B testing of prompts
+
+Negative:
+* Single point of failure (mitigated by redundancy)
+* Additional network hop adds latency
+* Backend scaling must match demand
+* All AI costs visible in one system
+
+Mitigation:
+* PM2 cluster mode for high availability
+* Response streaming to minimize perceived latency
+* Horizontal scaling capability
+* Redis for distributed session management
