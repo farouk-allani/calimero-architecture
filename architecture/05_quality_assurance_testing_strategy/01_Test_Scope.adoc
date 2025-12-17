@@ -80,12 +80,14 @@ The testing team will execute validation of changes across all Calimero platform
 
 === End-to-End Testing
 Testing complete user journeys across the platform:
+
 * Child plays game → chats with AI → watches video
 * Parent sets controls → child uses platform → parent reviews activity
 * Adult browses → adds to cart → completes checkout
 
 === Functional Testing
 Validation of all features against requirements:
+
 * AI character conversations (all 5 characters)
 * Game functionality and scoring
 * Video playback and controls
@@ -94,6 +96,7 @@ Validation of all features against requirements:
 
 === Safety Testing (Critical)
 Dedicated testing of child safety features:
+
 * Input filter effectiveness
 * Output filter effectiveness
 * Topic boundary enforcement

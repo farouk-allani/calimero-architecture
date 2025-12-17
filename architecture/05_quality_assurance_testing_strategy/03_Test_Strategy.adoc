@@ -176,6 +176,7 @@ Commit → Unit Tests → Integration Tests → Build → Deploy Staging → E2E
 ```
 
 Quality gates at each stage:
+
 * Unit tests: Must pass 100%
 * Integration tests: Must pass 100%
 * E2E critical paths: Must pass 100%
@@ -236,6 +237,7 @@ Quality gates at each stage:
 === 4.2 Safety-Related Defects
 
 Any safety-related defect is automatically Critical:
+
 * AI generating inappropriate content
 * PII being collected or logged
 * Safety filters bypassed

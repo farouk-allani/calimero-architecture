@@ -32,7 +32,8 @@ Architecture:
            [Cost Tracker]
 ```
 
-Rationale:
+*Rationale:*
+
 * Single point for safety filtering (critical for kids platform)
 * Centralized prompt injection for character personas
 * Unified session management
@@ -42,20 +43,23 @@ Rationale:
 
 *Consequences*:
 
-Positive:
+*Positive:*
+
 * Complete control over AI interactions
 * Consistent safety across all platforms
 * Simplified client implementations
 * Centralized monitoring and alerting
 * Easy A/B testing of prompts
 
-Negative:
+*Negative:*
+
 * Single point of failure (mitigated by redundancy)
 * Additional network hop adds latency
 * Backend scaling must match demand
 * All AI costs visible in one system
 
-Mitigation:
+*Mitigation:*
+
 * PM2 cluster mode for high availability
 * Response streaming to minimize perceived latency
 * Horizontal scaling capability

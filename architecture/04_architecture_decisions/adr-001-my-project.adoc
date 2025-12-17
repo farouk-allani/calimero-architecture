@@ -25,7 +25,8 @@ Evaluated options:
 *Decision:*
 We will use **Together AI** as the primary LLM provider with **Anthropic Claude** as the backup/failover provider.
 
-Rationale:
+*Rationale:*
+
 * Together AI offers excellent cost-to-quality ratio for high-volume usage
 * Together AI provides multiple model options for optimization
 * Claude's Constitutional AI approach aligns with child safety requirements
@@ -34,18 +35,21 @@ Rationale:
 
 *Consequences*:
 
-Positive:
+*Positive:*
+
 * Cost-effective scaling for MVP and beyond
 * Dual-provider strategy ensures high availability
 * Both providers support required languages
 * Strong safety capabilities from both providers
 
-Negative:
+*Negative:*
+
 * Need to maintain abstraction layer for provider switching
 * Slightly different response characteristics between providers
 * Additional complexity in failover logic
 
-Mitigation:
+*Mitigation:*
+
 * Implement robust LLM adapter with unified interface
 * Tune prompts for consistency across providers
 * Automated failover with health checks

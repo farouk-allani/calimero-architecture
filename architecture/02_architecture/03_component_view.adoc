@@ -69,6 +69,7 @@ Video content delivery with ISR for regular content updates. Features full episo
 
 ==== Play Section
 Interactive games section using Client-Side Rendering for dynamic gameplay. Includes:
+
 * Coloring activities with character templates
 * Memory match games
 * Puzzles with varying difficulty
@@ -84,6 +85,7 @@ AI companion text chat interface with real-time moderation. Conversations are ep
 
 ==== Parents Dashboard
 PIN-protected dashboard for parental controls:
+
 * Daily time limit configuration
 * Feature toggles (chat, downloads, specific characters)
 * Activity summary view (no chat content visible)
@@ -96,6 +98,7 @@ Hero-driven landing with ISR for dynamic content. Features latest drops, feature
 
 ==== Shop Section
 Full e-commerce experience integrated with Shopify Storefront API:
+
 * Product catalog with filters (category, size, price)
 * Size guides and fit recommendations
 * Wishlist with restock alerts
@@ -112,12 +115,14 @@ Historical content archive with classic episodes, show history, and "remember wh
 
 ==== Create Section
 AI-powered creative tools:
+
 * Character generator using LLM + image generation
 * Meme maker with Calimero templates
 * Fan art gallery
 
 ==== Account Section
 User account management with NextAuth.js:
+
 * Login/registration with social providers
 * Order history and tracking
 * Wishlist management
@@ -127,6 +132,7 @@ User account management with NextAuth.js:
 
 ==== Talk Feature (Voice AI)
 The core feature enabling voice conversations with AI characters:
+
 * Tap-to-talk or always-listening mode (parent choice)
 * Real-time character reactions while listening
 * Lip-sync animation driven by audio amplitude
@@ -134,6 +140,7 @@ The core feature enabling voice conversations with AI characters:
 
 ==== Stories Feature
 Interactive bedtime story experience:
+
 * AI-generated personalized stories
 * Choice-based narrative ("Should Calimero go left or right?")
 * Priscilla narration with soothing voice
@@ -141,6 +148,7 @@ Interactive bedtime story experience:
 
 ==== Play Feature
 Mobile-optimized games with voice feedback:
+
 * Memory match, puzzles, coloring
 * Rosita-hosted quiz games
 * Valeriano-led adventure games
@@ -148,6 +156,7 @@ Mobile-optimized games with voice feedback:
 
 ==== Watch Feature
 Video content with offline capabilities:
+
 * Full episodes and clips
 * Offline download (parent permission required)
 * AI-generated daily shorts
@@ -155,6 +164,7 @@ Video content with offline capabilities:
 
 ==== Learn Feature
 Educational content with Rosita:
+
 * Homework question assistance
 * Fun facts (animals, science, nature)
 * Language learning basics (IT, FR, EN)
@@ -162,6 +172,7 @@ Educational content with Rosita:
 
 ==== Parental Controls (Mobile)
 PIN-protected mobile dashboard syncing with web:
+
 * Daily time limits (30min / 1hr / 2hr / Unlimited)
 * Voice chat toggle
 * Download permissions
@@ -244,6 +255,7 @@ Rel(cms_proxy, content_cache, "Cache operations")
 
 === API Gateway
 Entry point for all client requests. Handles:
+
 * Request routing to appropriate services
 * Input validation using class-validator
 * Rate limiting (different limits for kids vs adult platforms)
@@ -251,12 +263,14 @@ Entry point for all client requests. Handles:
 
 === Auth Guard
 Authentication guard for adult site endpoints:
+
 * JWT token validation
 * Session verification
 * Role-based access control
 
 === AI Orchestrator
 Central coordination service for AI interactions:
+
 * Injects character-specific system prompts
 * Manages conversation context within session TTL
 * Coordinates safety filtering pipeline
@@ -264,6 +278,7 @@ Central coordination service for AI interactions:
 
 === LLM Adapter
 Provider abstraction layer enabling:
+
 * Hot-swappable LLM providers
 * Automatic failover to backup provider
 * Request/response normalization
@@ -271,6 +286,7 @@ Provider abstraction layer enabling:
 
 === Input Safety Filter
 Pre-processing interceptor for user input:
+
 * Sanitization of potentially harmful content
 * PII detection and removal
 * Length and format validation
@@ -278,6 +294,7 @@ Pre-processing interceptor for user input:
 
 === Output Safety Filter
 Post-processing interceptor for AI responses:
+
 * Content moderation validation
 * Response sanitization
 * Format normalization
@@ -285,17 +302,20 @@ Post-processing interceptor for AI responses:
 
 === Topic Boundary Guard
 Enforces conversation topic restrictions:
+
 * Whitelist: show, friendship, hobbies, learning, imagination, feelings
 * Blocks: personal data requests, inappropriate topics, external links
 
 === Emergency Detector
 Monitors for potential harm/danger indicators:
+
 * Triggers immediate safe response
 * Logs event for review (no PII)
 * Suggests seeking adult help
 
 === STT Adapter
 Speech-to-text service integration:
+
 * Whisper API communication
 * Audio format conversion
 * Multi-language support
@@ -303,6 +323,7 @@ Speech-to-text service integration:
 
 === TTS Adapter
 Text-to-speech service integration:
+
 * ElevenLabs API communication
 * Character voice selection (5 custom voices)
 * Audio streaming optimization
@@ -310,6 +331,7 @@ Text-to-speech service integration:
 
 === Parental Service
 Parental control management:
+
 * PIN verification
 * Settings CRUD operations
 * Cross-platform sync (web + mobile)
@@ -317,6 +339,7 @@ Parental control management:
 
 === Session Manager
 Ephemeral session handling:
+
 * TTL-based session creation
 * Context storage in Redis
 * Automatic session expiration
@@ -324,12 +347,14 @@ Ephemeral session handling:
 
 === CMS Proxy
 Content management integration:
+
 * Multi-tenant CMS queries
 * Platform-specific content filtering
 * Cache invalidation handling
 
 === Structured Logger
 Logging service ensuring privacy:
+
 * No PII in logs
 * Structured JSON format
 * Log level management

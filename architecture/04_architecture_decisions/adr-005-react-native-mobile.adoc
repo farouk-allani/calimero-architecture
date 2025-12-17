@@ -23,7 +23,8 @@ Options considered:
 *Decision:*
 We will use **React Native** with TypeScript for the mobile app development.
 
-Rationale:
+*Rationale:*
+
 * Single codebase for iOS and Android
 * Team expertise in TypeScript (shared with web)
 * Excellent Rive animation support
@@ -34,7 +35,8 @@ Rationale:
 
 *Consequences*:
 
-Positive:
+*Positive:*
+
 * Single codebase reduces development time by ~40%
 * TypeScript consistency across all platforms
 * Hot reloading speeds development
@@ -42,13 +44,15 @@ Positive:
 * Rive integration well-supported
 * Native modules available for audio/voice
 
-Negative:
+*Negative:*
+
 * Slightly lower performance than pure native
 * Some platform-specific code still needed
 * Dependency on React Native release cycle
 * Bundle size larger than native
 
-Mitigation:
+*Mitigation:*
+
 * Use Hermes engine for better performance
 * Native modules for performance-critical features
 * Thorough testing on both platforms

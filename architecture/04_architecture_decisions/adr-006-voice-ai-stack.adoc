@@ -48,20 +48,23 @@ Voice characteristics for 5 characters:
 
 *Consequences*:
 
-Positive:
+*Positive:*
+
 * Whisper's excellent multilingual support (IT, FR, EN)
 * ElevenLabs produces natural, expressive voices
 * Custom voice cloning creates unique character identities
 * Both services have good latency characteristics
 * Strong documentation and SDK support
 
-Negative:
+*Negative:*
+
 * ElevenLabs cost scales with usage
 * Dependency on external services
 * Voice training requires quality samples
 * Latency varies by network conditions
 
-Mitigation:
+*Mitigation:*
+
 * Text fallback when voice fails
 * Audio streaming (not waiting for complete audio)
 * Pre-loaded voice models on ElevenLabs

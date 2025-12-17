@@ -25,7 +25,8 @@ We will implement the **subdomain model** with completely separate deployments:
 
 A pop-up gate on first visit to calimero.com allows users to choose their experience.
 
-Rationale:
+*Rationale:*
+
 * Clear technical and legal separation for COPPA compliance
 * Separate deployments enable independent scaling and updates
 * Follows proven model (LEGO, Disney, etc.)
@@ -35,20 +36,23 @@ Rationale:
 
 *Consequences*:
 
-Positive:
+*Positive:*
+
 * Complete COPPA compliance isolation
 * Independent deployment and scaling
 * Clear audit boundaries
 * Separate analytics and tracking (none for kids)
 * Team can work on sites independently
 
-Negative:
+*Negative:*
+
 * Two codebases to maintain
 * Shared components need careful management
 * Cross-site navigation requires explicit handling
 * Two Vercel deployments (additional cost)
 
-Mitigation:
+*Mitigation:*
+
 * Shared component library for common elements
 * Monorepo structure for code sharing
 * Clear documentation of shared vs. site-specific code

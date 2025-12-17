@@ -65,6 +65,7 @@ Rel(adultWeb, analytics, "User analytics", "HTTPS")
 Children ages 4-12 are the primary users of the kids website and mobile app. They interact with AI character companions, play educational games, watch Calimero episodes, and engage in creative activities. All interactions are designed to be safe, moderated, and COPPA-compliant. Voice interactions are only available in the mobile app.
 
 Key features accessed:
+
 * AI text chat (website) and voice chat (mobile app)
 * Games: memory match, puzzles, coloring, dress-up, quiz
 * Video content: episodes, clips, AI-generated shorts
@@ -74,6 +75,7 @@ Key features accessed:
 Parents access the parental dashboard on both the website and mobile app to manage their child's experience. They set time limits, enable/disable features, and can view activity summaries (without chat content). All parental controls are PIN-protected.
 
 Key features accessed:
+
 * Parental dashboard (PIN-protected)
 * Time limit configuration
 * Feature toggles (voice chat, downloads, specific characters)
@@ -83,6 +85,7 @@ Key features accessed:
 Adults ages 18-50 access calimero.com for merchandise shopping, nostalgic content, and AI-powered creative tools. They can create accounts, make purchases, and engage with the Calimero culture and community.
 
 Key features accessed:
+
 * E-commerce: merchandise, drops, wishlist
 * AI character generator and meme maker
 * Nostalgia content: classic episodes, history
@@ -92,6 +95,7 @@ Key features accessed:
 A completely separate, child-safe web experience with zero tracking or data collection. Features bright, playful design with large touch targets and icon-heavy navigation.
 
 Technical characteristics:
+
 * Next.js 14 with Static Site Generation
 * Cookieless analytics (Plausible)
 * No user accounts or persistent data

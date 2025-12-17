@@ -28,7 +28,8 @@ We will implement **ephemeral in-memory storage** using Redis with TTL-based exp
 * Automatic deletion on session end
 * No conversation recovery possible
 
-Rationale:
+*Rationale:*
+
 * Maintains natural conversation flow within a session
 * Complete COPPA compliance (no persistent child data)
 * Simplified data handling and compliance
@@ -37,20 +38,23 @@ Rationale:
 
 *Consequences*:
 
-Positive:
+*Positive:*
+
 * Full COPPA compliance by design
 * No conversation data to breach
 * Simplified privacy policy
 * No data retention management needed
 * Users start fresh each session
 
-Negative:
+*Negative:*
+
 * Cannot personalize over time
 * No conversation history for users
 * Lost context on session timeout
 * Cannot analyze conversation quality
 
-Mitigation:
+*Mitigation:*
+
 * Friendly session timeout warnings
 * Quick re-engagement after timeout
 * Character personas provide consistency

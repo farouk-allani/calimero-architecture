@@ -86,7 +86,8 @@ The kids web application (kids.calimero.com) is a completely separate Next.js 14
 * **Features**: Games, videos, AI text chat, character profiles
 * **Data Policy**: Zero cookies, zero tracking, no user accounts
 
-Design decisions:
+*Design decisions:*
+
 * Static Site Generation (SSG) for all public pages
 * Incremental Static Regeneration (ISR) for content updates
 * Large touch targets (48px+) for young users
@@ -102,7 +103,8 @@ The adult web application (calimero.com) serves nostalgia seekers, collectors, a
 * **Analytics**: Full GA4 and Meta Pixel integration
 * **Features**: Shop, drops, culture, AI generator, accounts
 
-Design decisions:
+*Design decisions:*
+
 * Sleek, minimal streetwear aesthetic (black, white, yellow accents)
 * Quick checkout (Apple Pay, Google Pay, PayPal)
 * Multi-currency support (EUR, USD, GBP, JPY)
@@ -116,7 +118,8 @@ The premium kids experience with voice AI companions:
 * **Platforms**: iOS 15+ and Android 10+
 * **Storage**: Secure local storage (settings only, no chat history)
 
-Features:
+*Features:*
+
 * Voice conversations with 5 AI characters
 * Interactive bedtime stories
 * Games with voice feedback
