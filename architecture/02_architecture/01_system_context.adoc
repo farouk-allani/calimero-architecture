@@ -28,7 +28,7 @@ Enterprise_Boundary(calimero, "Calimero Platform") {
     System(backend, "Calimero Backend", "NestJS API server handling AI orchestration, safety filtering, and business logic")
 }
 
-System_Ext(llmApi, "LLM API", "Together AI / Claude - Language model for AI character conversations")
+System_Ext(llmApi, "LLM API", "Language model for AI character conversations")
 System_Ext(sttApi, "Speech-to-Text API", "Whisper API - Converts child's speech to text")
 System_Ext(ttsApi, "Text-to-Speech API", "ElevenLabs - Character voice synthesis with custom voices")
 System_Ext(cms, "Headless CMS", "Sanity / Contentful - Content management for all platforms")
@@ -101,12 +101,12 @@ Technical characteristics:
 * No user accounts or persistent data
 * COPPA-compliant design and implementation
 
-Link to <<03_component_view.adoc#components, component view>> for detailed internal structure.
 
 === Adult Website (calimero.com)
 The main commercial platform with full e-commerce capabilities, user accounts, and analytics. Features sleek, minimal streetwear aesthetic.
 
 Technical characteristics:
+
 * Next.js 14 with ISR for dynamic content
 * NextAuth.js for authentication
 * Full analytics integration (GA4, Meta Pixel)
@@ -116,6 +116,7 @@ Technical characteristics:
 A dedicated React Native application for iOS and Android featuring voice AI companions with Rive animations. This is the premium kids experience with advanced voice interaction capabilities.
 
 Technical characteristics:
+
 * React Native with TypeScript
 * Rive for real-time character animations
 * Native audio APIs for voice recording/playback
@@ -124,14 +125,12 @@ Technical characteristics:
 === Calimero Backend (NestJS)
 The centralized backend server handling all AI orchestration, safety filtering, content delivery, and business logic. All AI traffic is routed through this layer for consistent moderation and control.
 
-Link to relevant <<../05_deployment_view.adoc#_deployment_view, deployment>> documentation.
 
 === External Systems
 
-==== LLM API (Together AI / Claude)
+==== LLM API
 External large language model service providing AI inference for character conversations. Selected for child-safety capabilities and provider abstraction for failover.
 
-Reference: <<../04_architecture_decisions/adr-001-llm-provider.adoc, ADR-001: LLM Provider Selection>>
 
 ==== ElevenLabs TTS
 Text-to-speech service with custom voice training for each of the 5 AI characters. Provides natural, expressive voice synthesis with character-specific personalities.

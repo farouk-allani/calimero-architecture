@@ -56,7 +56,7 @@ List key constraints that influence architectural decisions. Keep this list upda
 |NestJS API Server (TypeScript)
 
 |External APIs
-|LLM API (Together AI/Claude), Speech-to-Text API (Whisper), Text-to-Speech API (ElevenLabs)
+|LLM API, Speech-to-Text API (Whisper), Text-to-Speech API (ElevenLabs)
 
 |Infrastructure
 |Vercel (Web hosting), Dedicated Server (Backend), Cloudflare CDN

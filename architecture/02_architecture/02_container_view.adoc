@@ -37,7 +37,7 @@ System_Boundary(calimero, "Calimero Platform") {
     ContainerDb(sessionCache, "Session Cache", "Redis", "Ephemeral session memory (TTL-based)")
 }
 
-System_Ext(llmApi, "LLM API", "Together AI / Claude")
+System_Ext(llmApi, "LLM API", "Together AI or maybe we choose an other option")
 System_Ext(sttApi, "Whisper API", "Speech-to-Text")
 System_Ext(ttsApi, "ElevenLabs", "Text-to-Speech")
 System_Ext(cms, "Headless CMS", "Sanity / Contentful")

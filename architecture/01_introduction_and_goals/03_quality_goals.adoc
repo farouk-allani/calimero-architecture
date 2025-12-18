@@ -22,7 +22,7 @@ How will quality be measured in this project, also referred to as Non-Functional
 
 |[[Q5]]Q5 |Scalability |Architecture supports 10x growth in user base. Horizontal scaling for backend services. CDN edge caching for global distribution.
 
-|[[Q6]]Q6 |Localization |Multi-language support for Italian, French, and English at launch. URL-based locale routing. CMS-driven content localization.
+|[[Q6]]Q6 |Localization |Multi-language support for Italian, French, and English at launch.
 
 |[[Q7]]Q7 |Accessibility |WCAG 2.1 AA compliance. Large touch targets (48px+) for kids interfaces. Icon-heavy navigation with minimal text for young users.
 

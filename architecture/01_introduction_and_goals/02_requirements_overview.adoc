@@ -37,8 +37,8 @@ This section outlines high-level technical requirements. Each entry represents a
 |[[TR3]]TR3 | Backend services shall be implemented using NestJS (TypeScript)
 |[[TR4]]TR4 | Speech-to-Text shall be implemented using Whisper API or native device capabilities
 |[[TR5]]TR5 | Text-to-Speech shall be implemented using ElevenLabs with custom trained voices
-|[[TR6]]TR6 | LLM integration shall use external API (Claude/Together AI) with provider abstraction layer
-|[[TR7]]TR7 | Web hosting shall use Vercel for automatic subdomain routing
+|[[TR6]]TR6 | LLM integration shall use external API with provider abstraction layer
+|[[TR7]]TR7 | Web hosting shall use Vercel
 |[[TR8]]TR8 | Backend shall be deployed on dedicated server infrastructure
 |[[TR9]]TR9 | Content management shall use headless CMS (Sanity or Contentful)
 |[[TR10]]TR10 | Kids site analytics shall use cookieless solution (Plausible) for COPPA compliance
